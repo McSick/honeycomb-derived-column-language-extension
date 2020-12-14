@@ -1,0 +1,32 @@
+{
+    "name": "honeycomb-sli",
+    "displayName": "Honeycomb SLI",
+    "description": "SLI Language Extension",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.52.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "honeycomb-sli",
+            "aliases": ["Honeycomb SLI", "honeycomb-sli"],
+            "extensions": [".honey"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "honeycomb-sli",
+            "scopeName": "text.honey",
+            "path": "./syntaxes/honeycomb-sli.tmLanguage.json"
+        }],
+        "snippets": [
+            {
+              "language": "honeycomb-sli",
+              "path": "./snippets/honeycomb-sli.snippets.json"
+            }
+          ]
+
+    }
+}

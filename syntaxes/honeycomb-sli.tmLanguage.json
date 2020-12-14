@@ -1,0 +1,61 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Honeycomb SLI",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#variables"
+		}
+	],
+	"repository": {
+
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.conditional.honeycomb-sli",
+				"match": "\\b(IF|COALESCE)\\b"
+			},{
+				"name": "keyword.comparison.honeycomb-sli",
+				"match": "\\b(LT|LTE|GT|GTE|EQUALS|IN|EXISTS)\\b"
+			},{
+				"name": "keyword.boolean.honeycomb-sli",
+				"match": "\\b(NOT|AND|OR)\\b"
+			},{
+				"name": "keyword.math.honeycomb-sli",
+				"match": "\\b(MIN|MAX|SUM|SUB|MUL|DIV|LOG10|BUCKET)\\b"
+			},{
+				"name": "keyword.cast.honeycomb-sli",
+				"match": "\\b(INT|FLOAT|BOOL|STRING)\\b"
+			},{
+				"name": "keyword.string.honeycomb-sli",
+				"match": "\\b(CONCAT|STARTS_WITH|CONTAINS|REG_MATCH|REG_VALUE|REG_COUNT)\\b"
+			},{
+				"name": "keyword.utility.honeycomb-sli",
+				"match": "\\b(UNIX_TIMESTAMP|EVENT_TIMESTAMP)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.honeycomb-sli",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.honeycomb-sli",
+					"match": "\\\\."
+				}
+			]
+		},
+		"variables": {
+			"patterns": [{
+				"name": "variable.otherva.honeycomb-sli",
+				"match": "\\$([a-zA-Z0-9_]+|\"[a-zA-Z_z]+\")"
+				}]
+		}
+
+	},
+	"scopeName": "text.honey"
+}

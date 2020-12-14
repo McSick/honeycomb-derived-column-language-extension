@@ -1,0 +1,92 @@
+{
+    "IF Statement": {
+        "prefix":"IF",
+        "body": "IF($1,$2,$3)",
+        "description" : "IF( condition, then-val [, condition2, then-val2]... [, else-val])"
+    },
+    "Less Than": {
+        "prefix":"LT",
+        "body": "LT($1,$2)",
+        "description" : "LT(left, right)"
+    },
+    "Greater Than": {
+        "prefix":"LTE",
+        "body": "LTE($1,$2)",
+        "description" : "LTE(left, right)"
+    },
+    "Less Than Equal": {
+        "prefix":"GT",
+        "body": "GT($1,$2)",
+        "description" : "GT(left,right)"
+    },
+    "Greater Than Equal": {
+        "prefix":"GTE",
+        "body": "GTE($1,$2)",
+        "description" : "GTE(left,right)"
+    },
+    "Equals": {
+        "prefix":"EQUALS",
+        "body": "EQUALS($1,$2)",
+        "description" : "EQUALS(arg1,arg2)"
+    },
+    "IN": {
+        "prefix":"IN",
+        "body": "IN($1,$2)",
+        "description" : "IN(arg1, compare1, ...)"
+    },
+    "EXISTS": {
+        "prefix":"EXISTS",
+        "body": "EXISTS($1)",
+        "description" : "EXISTS(arg1)"
+    },
+    "AND": {
+        "prefix":"AND",
+        "body": "AND($1,$2)",
+        "description" : "AND(arg1, arg2, ...)"
+    },    
+    "OR": {
+        "prefix":"OR",
+        "body": "OR($1,$2)",
+        "description" : "OR(arg1, arg2, ...)"
+    },
+    "MIN": {
+        "prefix":"MIN",
+        "body": "MIN($1,$2)",
+        "description" : "MIN(arg1, arg2, ...)"
+    },
+    "MAX": {
+        "prefix":"MAX",
+        "body": "MAX($1,$2)",
+        "description" : "MAX(arg1, arg2, ...)"
+    },
+    "SUM": {
+        "prefix":"SUM",
+        "body": "SUM($1,$2)",
+        "description" : "SUM(arg1, arg2, ...)"
+    },
+    "SUB": {
+        "prefix":"SUB",
+        "body": "SUB($1,$2)",
+        "description" : "SUB(arg1, arg2)"
+    },
+    "MUL": {
+        "prefix":"MUL",
+        "body": "MUL($1,$2)",
+        "description" : "MUL(arg1, arg2, ...)"
+    },
+    "DIV": {
+        "prefix":"DIV", 
+        "body": "DIV(${1:arg1},${2:arg2})",
+        "description" : "DIV(arg1, arg2)"
+    },
+    "LOG10": {
+        "prefix":"LOG10",
+        "body": "LOG10($1)",
+        "description" : "LOG10(arg1)"
+    },
+    "BUCKET": {
+        "prefix":"BUCKET",
+        "body": "BUCKET(\\$column, size${1| ,\\,min,\\,min\\,max|})",
+        "description" : "BUCKET( $column, size, [min, [max]])"
+    }
+}
