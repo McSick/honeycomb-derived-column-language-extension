@@ -10,6 +10,9 @@
 		},
 		{
 			"include": "#variables"
+		},
+		{
+			"include": "#constants"
 		}
 	],
 	"repository": {
@@ -51,9 +54,19 @@
 		},
 		"variables": {
 			"patterns": [{
-				"name": "variable.otherva.honeycomb-sli",
-				"match": "\\$([a-zA-Z0-9_]+|\"[a-zA-Z_z]+\")"
+				"name": "variable.other.honeycomb-sli",
+				"match": "\\$([a-zA-Z0-9_\\.]+|\"[a-zA-Z_z\\.]+\")"
 				}]
+		}, 
+		"constants": {
+			"patterns": [{
+				"name": "constant.language.honeycomb-sli",
+				"match": "\\b(true|false|null)\\b"
+			}, 
+			{
+				"name": "constant.numeric.honeycomb-sli",
+				"match": "\\b[1-9]\\d*(\\.\\d+)?\\b"
+			}]
 		}
 
 	},

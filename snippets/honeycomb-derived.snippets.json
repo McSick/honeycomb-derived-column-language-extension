@@ -1,8 +1,13 @@
 {
     "IF Statement": {
         "prefix":"IF",
-        "body": "IF($1,$2,$3)",
+        "body": "IF(${1:condition},${2:then-val}${3| ,\\,else-val|})",
         "description" : "IF( condition, then-val [, condition2, then-val2]... [, else-val])"
+    },
+    "COALESCE Statement": {
+        "prefix":"COALESCE",
+        "body": "COALESCE($1, $2)",
+        "description" : "COALESCE(arg1, arg2, ...)"
     },
     "Less Than": {
         "prefix":"LT",
@@ -88,5 +93,65 @@
         "prefix":"BUCKET",
         "body": "BUCKET(\\$column, size${1| ,\\,min,\\,min\\,max|})",
         "description" : "BUCKET( $column, size, [min, [max]])"
+    },
+    "INT": {
+        "prefix":"INT",
+        "body": "INT($1)",
+        "description" : "INT(arg1)"
+    },
+    "FLOAT": {
+        "prefix":"FLOAT",
+        "body": "FLOAT($1)",
+        "description" : "FLOAT(arg1)"
+    },
+    "BOOL": {
+        "prefix":"BOOL",
+        "body": "BOOL($1)",
+        "description" : "BOOL(arg1)"
+    },
+    "STRING": {
+        "prefix":"STRING",
+        "body": "STRING($1)",
+        "description" : "STRING(arg1)"
+    },
+    "CONCAT": {
+        "prefix":"CONCAT",
+        "body": "CONCAT($1, $2)",
+        "description" : "CONCAT(arg1, arg2, ...)"
+    },
+    "STARTS_WITH": {
+        "prefix":"STARTS_WITH",
+        "body": "STARTS_WITH($1, $2)",
+        "description" : "STARTS_WITH(string, prefix)"
+    },
+    "CONTAINS": {
+        "prefix":"CONTAINS",
+        "body": "CONTAINS($1, $2)",
+        "description" : "CONTAINS(string, substr)"
+    },
+    "REG_MATCH": {
+        "prefix":"REG_MATCH",
+        "body": "REG_MATCH($1, $2)",
+        "description" : "REG_MATCH(string, regex) [GOLANG REGEX]"
+    },
+    "REG_VALUE": {
+        "prefix":"REG_VALUE",
+        "body": "REG_VALUE($1, $2)",
+        "description" : "REG_VALUE(string, regex) [GOLANG REGEX]"
+    },
+    "REG_COUNT": {
+        "prefix":"REG_COUNT",
+        "body": "REG_COUNT(${1:string}, $2)",
+        "description" : "REG_COUNT(string, regex) [GOLANG REGEX]"
+    },
+    "UNIX_TIMESTAMP": {
+        "prefix":"UNIX_TIMESTAMP",
+        "body": "UNIX_TIMESTAMP($1)",
+        "description" : "UNIX_TIMESTAMP(string)"
+    },
+    "EVENT_TIMESTAMP": {
+        "prefix":"EVENT_TIMESTAMP",
+        "body": "EVENT_TIMESTAMP()",
+        "description" : "EVENT_TIMESTAMP()"
     }
 }

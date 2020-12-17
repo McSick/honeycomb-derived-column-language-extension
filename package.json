@@ -1,32 +1,67 @@
 {
-    "name": "honeycomb-sli",
-    "displayName": "Honeycomb SLI",
-    "description": "SLI Language Extension",
-    "version": "0.0.1",
-    "engines": {
-        "vscode": "^1.52.0"
-    },
-    "categories": [
-        "Programming Languages"
+  "name": "honeycomb-derived",
+  "displayName": "Honeycomb Derived Columns",
+  "description": "Create derived columns for use in Honeycomb.io's SLI's",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.52.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "lint": "eslint . --ext .ts,.tsx",
+    "watch": "tsc -watch -p ./"
+  },
+  "activationEvents": [
+    "onLanguage:honeycomb-derived"
+  ],
+  "main": "./out/extension.js",
+  "devDependencies": {
+    "@types/node": "^12.12.0",
+    "@types/vscode": "^1.34.0",
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "@typescript-eslint/parser": "^3.0.2",
+    "eslint": "^7.1.0",
+    "typescript": "^4.0.2"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.minimize",
+        "title": "Minimize"
+      }
     ],
-    "contributes": {
-        "languages": [{
-            "id": "honeycomb-sli",
-            "aliases": ["Honeycomb SLI", "honeycomb-sli"],
-            "extensions": [".honey"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "honeycomb-sli",
-            "scopeName": "text.honey",
-            "path": "./syntaxes/honeycomb-sli.tmLanguage.json"
-        }],
-        "snippets": [
-            {
-              "language": "honeycomb-sli",
-              "path": "./snippets/honeycomb-sli.snippets.json"
-            }
-          ]
-
-    }
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceLangId == honeycomb-derived",
+          "command": "extension.minimize",
+          "group": "Honeycomb"
+        }
+      ]
+    },
+    "languages": [
+      {
+        "id": "honeycomb-derived",
+        "aliases": [
+          "Honeycomb Derived",
+          "honeycomb-derived"
+        ],
+        "extensions": [
+          ".honeycomb"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "honeycomb-derived",
+        "scopeName": "text.honey",
+        "path": "./syntaxes/honeycomb-derived.tmLanguage.json"
+      }
+    ]
+  }
 }
