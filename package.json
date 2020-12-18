@@ -3,7 +3,7 @@
   "displayName": "Honeycomb Derived Columns Language",
   "description": "Create derived columns for use in Honeycomb.io's SLI's.  This is not an official honeycomb.io maintained plugin.",
   "publisher": "michaelcsickles",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "author": {
     "name": "michaelcsickles"
@@ -19,7 +19,13 @@
   "categories": [
     "Programming Languages"
   ],
-  "keywords": ["honeycomb", "language", "SLI", "SLO", "derived"],
+  "keywords": [
+    "honeycomb",
+    "language",
+    "SLI",
+    "SLO",
+    "derived"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
