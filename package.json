@@ -1,14 +1,24 @@
 {
   "name": "honeycomb-derived",
-  "displayName": "Honeycomb Derived Columns",
-  "description": "Create derived columns for use in Honeycomb.io's SLI's",
+  "displayName": "Honeycomb Derived Columns Language",
+  "description": "Create derived columns for use in Honeycomb.io's SLI's.  This is not an official honeycomb.io maintained plugin.",
+  "publisher": "michaelcsickles",
   "version": "1.0.0",
+  "author": {
+    "name": "michaelcsickles"
+  },
+  "icon": "images/icon.jpg",
+  "galleryBanner": {
+    "color": "#FDB912",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.52.0"
   },
   "categories": [
     "Programming Languages"
   ],
+  "keywords": ["honeycomb", "language", "SLI", "SLO", "derived"],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
