@@ -15,7 +15,12 @@ If you run into an issue. Please log it [here](https://github.com/McSick/honeyco
 ## Release Notes
 
 - 1.0.0, initial release.
+- 1.1.1 quick fix for parenthese
 
 ### 1.0.0
 
 Initial release of Honeycomb Derived Column formatter.  See https://github.com/
+
+### 1.1.1
+
+Bug fix for parenthese inside quotes

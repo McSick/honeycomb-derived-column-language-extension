@@ -146,9 +146,17 @@ class HoneyCombDocumentFormattingEditProvider
   private format(minifiedtext: string) {
     let paren = 0;
     let result = "";
+    let inquote = false;
     for (var i = 0; i < minifiedtext.length; i++) {
       let charat = minifiedtext[i];
-      if (charat == ",") {
+      if (charat == "\"") {
+        inquote = !inquote;
+        result += charat;
+        continue;
+      }
+      if (inquote) {
+        result += charat;
+      } else if (charat == ",") {
         result += charat + "\n" + "\t".repeat(paren);
       } else if (charat == "(") {
         paren++;
