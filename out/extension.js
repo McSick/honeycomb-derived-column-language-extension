@@ -15,7 +15,7 @@ function minimizeString(s) {
     for (let i = 0; i < s.length; i++) {
         let c = s[i];
         if (c == '"' || c == "`") {
-            if (inside) {
+            if (!inside) {
                 inside = true;
                 inside_char = c;
             }
@@ -26,7 +26,10 @@ function minimizeString(s) {
             newstring += c;
             continue;
         }
-        else if (!inside) {
+        else if (inside) {
+            newstring += c;
+        }
+        else {
             newstring += c.trim();
         }
     }

@@ -36,7 +36,7 @@ function minimizeString(s: string): string {
   for (let i = 0; i < s.length; i++) {
     let c = s[i];
     if (c == '"' || c == "`") {
-      if (inside) {
+      if (!inside) {
         inside = true;
         inside_char = c;
       } else if (inside && inside_char == c) {
@@ -45,7 +45,9 @@ function minimizeString(s: string): string {
       }
       newstring += c;
       continue;
-    } else if (!inside) {
+    } else if (inside) {
+      newstring += c;
+    } else {
       newstring += c.trim();
     }
   }
@@ -198,14 +200,12 @@ class HoneyCombDocumentFormattingEditProvider
             i++;
             paren--;
             result += charat + ")";
-
           } else {
             result += charat + "\n" + "\t".repeat(paren);
           }
         } else {
           result += charat + "\n" + "\t".repeat(paren);
         }
-
       } else if (charat == ")") {
         paren--;
         if (i < minifiedtext.length - 1) {

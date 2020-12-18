@@ -19,11 +19,12 @@ If you run into an issue. Please log it [here](https://github.com/McSick/honeyco
 - 1.1.2 quick fix for backtic
 - 1.1.3 quick fix for minimize in quotes
 - 1.1.4 less regex on minimize, more logic
+- 1.1.5 even more logic
 
 ### 1.0.0
 
 Initial release of Honeycomb Derived Column formatter.  See https://github.com/
 
-### 1.1.1 to 1.1.4
+### 1.1.1 to 1.1.5
 
 Bug fix 
