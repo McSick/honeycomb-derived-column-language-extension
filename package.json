@@ -69,7 +69,8 @@
           "honeycomb-derived"
         ],
         "extensions": [
-          ".honeycomb"
+          ".honeycomb",
+          ".hny"
         ],
         "configuration": "./language-configuration.json"
       }
