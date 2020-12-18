@@ -4,6 +4,7 @@
   "description": "Create derived columns for use in Honeycomb.io's SLI's.  This is not an official honeycomb.io maintained plugin.",
   "publisher": "michaelcsickles",
   "version": "1.0.0",
+  "license": "MIT",
   "author": {
     "name": "michaelcsickles"
   },

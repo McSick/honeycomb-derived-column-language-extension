@@ -1,6 +1,6 @@
 # honeycomb-derived README
 
-Language features for Honeycombe derived columns. Just save a file as .honeycomb and paste in your definition or start writing a new one. Right click for the menu.  Format Document expands column.  Minimize to shrink it down.
+Language features for Honeycombe derived columns. Just save a file as .honeycomb and paste in your definition or start writing a new one. Right click for the menu.  Format Document expands column.  Minimize to shrink it down. THIS IS NOT AN OFFICIAL PLUGIN FROM HONEYCOMB.IO. USE AT YOUR OWN RISK.
 
 ## Features
 
@@ -11,9 +11,8 @@ Language features for Honeycombe derived columns. Just save a file as .honeycomb
 
 
 ## Known Issues
-
-
-
+ d
+If you run into an issue. Please log it [here](https://github.com/McSick/honeycomb-derived-column-language-extension/issues)
 ## Release Notes
 
 - 1.0.0, initial release.
