@@ -149,7 +149,7 @@ class HoneyCombDocumentFormattingEditProvider
     let inquote = false;
     for (var i = 0; i < minifiedtext.length; i++) {
       let charat = minifiedtext[i];
-      if (charat == "\"") {
+      if (charat == "\"" || charat == "`") {
         inquote = !inquote;
         result += charat;
         continue;

@@ -1,74 +1,99 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "Honeycomb SLI",
-	"patterns": [
-		{
-			"include": "#keywords"
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Honeycomb SLI",
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#variables"
+    },
+    {
+      "include": "#constants"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.conditional.honeycomb-sli",
+          "match": "\\b(IF|COALESCE)\\b"
+        },
+        {
+          "name": "keyword.comparison.honeycomb-sli",
+          "match": "\\b(LT|LTE|GT|GTE|EQUALS|IN|EXISTS)\\b"
+        },
+        {
+          "name": "keyword.boolean.honeycomb-sli",
+          "match": "\\b(NOT|AND|OR)\\b"
+        },
+        {
+          "name": "keyword.math.honeycomb-sli",
+          "match": "\\b(MIN|MAX|SUM|SUB|MUL|DIV|LOG10|BUCKET)\\b"
+        },
+        {
+          "name": "keyword.cast.honeycomb-sli",
+          "match": "\\b(INT|FLOAT|BOOL|STRING)\\b"
+        },
+        {
+          "name": "keyword.string.honeycomb-sli",
+          "match": "\\b(CONCAT|STARTS_WITH|CONTAINS|REG_MATCH|REG_VALUE|REG_COUNT)\\b"
+        },
+        {
+          "name": "keyword.utility.honeycomb-sli",
+          "match": "\\b(UNIX_TIMESTAMP|EVENT_TIMESTAMP)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.honeycomb-sli",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.honeycomb-sli",
+              "match": "\\\\."
+            }
+          ]
 		},
 		{
-			"include": "#strings"
-		},
-		{
-			"include": "#variables"
-		},
-		{
-			"include": "#constants"
-		}
-	],
-	"repository": {
-
-		"keywords": {
-			"patterns": [{
-				"name": "keyword.conditional.honeycomb-sli",
-				"match": "\\b(IF|COALESCE)\\b"
-			},{
-				"name": "keyword.comparison.honeycomb-sli",
-				"match": "\\b(LT|LTE|GT|GTE|EQUALS|IN|EXISTS)\\b"
-			},{
-				"name": "keyword.boolean.honeycomb-sli",
-				"match": "\\b(NOT|AND|OR)\\b"
-			},{
-				"name": "keyword.math.honeycomb-sli",
-				"match": "\\b(MIN|MAX|SUM|SUB|MUL|DIV|LOG10|BUCKET)\\b"
-			},{
-				"name": "keyword.cast.honeycomb-sli",
-				"match": "\\b(INT|FLOAT|BOOL|STRING)\\b"
-			},{
-				"name": "keyword.string.honeycomb-sli",
-				"match": "\\b(CONCAT|STARTS_WITH|CONTAINS|REG_MATCH|REG_VALUE|REG_COUNT)\\b"
-			},{
-				"name": "keyword.utility.honeycomb-sli",
-				"match": "\\b(UNIX_TIMESTAMP|EVENT_TIMESTAMP)\\b"
-			}]
-		},
-		"strings": {
-			"name": "string.quoted.double.honeycomb-sli",
-			"begin": "\"",
-			"end": "\"",
+			"name": "string.regex.tic.honeycomb-sli",
+			"begin": "`",
+			"end": "`",
 			"patterns": [
-				{
-					"name": "constant.character.escape.honeycomb-sli",
-					"match": "\\\\."
-				}
+			  {
+				"name": "constant.character.escape.honeycomb-sli",
+				"match": "\\\\."
+			  }
 			]
-		},
-		"variables": {
-			"patterns": [{
-				"name": "variable.other.honeycomb-sli",
-				"match": "\\$([a-zA-Z0-9_\\.]+|\"[a-zA-Z_z\\.]+\")"
-				}]
-		}, 
-		"constants": {
-			"patterns": [{
-				"name": "constant.language.honeycomb-sli",
-				"match": "\\b(true|false|null)\\b"
-			}, 
-			{
-				"name": "constant.numeric.honeycomb-sli",
-				"match": "\\b[1-9]\\d*(\\.\\d+)?\\b"
-			}]
-		}
-
-	},
-	"scopeName": "text.honey"
+		  }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "name": "variable.other.honeycomb-sli",
+          "match": "\\$([a-zA-Z0-9_\\.]+|\"[a-zA-Z_z\\.]+\")"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.honeycomb-sli",
+          "match": "\\b(true|false|null)\\b"
+        },
+        {
+          "name": "constant.numeric.honeycomb-sli",
+          "match": "\\b[1-9]\\d*(\\.\\d+)?\\b"
+        }
+      ]
+    }
+  },
+  "scopeName": "text.honey"
 }
