@@ -5,6 +5,7 @@ const vscode = require("vscode");
 const vscode_1 = require("vscode");
 const textdefinitions_1 = require("./textdefinitions");
 const HONEYCOMB_SELECTOR = "honeycomb-derived";
+const MINIFYREGEX = /\s+(?=((\\[\\"`']|[^\\"`'])*[`'"](\\[\\"`']|[^\\"`'])*["'`])*(\\[\\"'`]|[^\\"`'])*$)/g;
 // import { workspace, Disposable, ExtensionContext } from 'vscode';
 // import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 // this method is called when your extension is activated
@@ -23,7 +24,7 @@ function activate(context) {
             let text = document.getText();
             const edit = new vscode.WorkspaceEdit();
             let fullRange = new vscode.Range(0, 0, document.lineCount, 0);
-            edit.replace(document.uri, fullRange, text.replace(/\s+(?=((\\[\\"]|[^\\"])*"(\\[\\"]|[^\\"])*")*(\\[\\"]|[^\\"])*$)/g, ""));
+            edit.replace(document.uri, fullRange, text.replace(MINIFYREGEX, ""));
             return vscode.workspace.applyEdit(edit);
         }
     }));
@@ -47,7 +48,7 @@ class HoneyCombDocumentFormattingEditProvider {
         return [vscode_1.TextEdit.replace(fullRange, result)];
     }
     minifyText(text) {
-        return text.replace(/\s+(?=((\\[\\"]|[^\\"])*"(\\[\\"]|[^\\"])*")*(\\[\\"]|[^\\"])*$)/g, "");
+        return text.replace(MINIFYREGEX, "");
     }
     format(minifiedtext) {
         let paren = 0;
