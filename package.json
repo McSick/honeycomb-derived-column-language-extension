@@ -8,7 +8,7 @@
   "author": {
     "name": "michaelcsickles"
   },
-  "icon": "https://github.com/McSick/honeycomb-derived-column-language-extension/blob/master/images/icon.jpg?raw=true",
+  "icon": "images/icon.jpg",
   "galleryBanner": {
     "color": "#FDB912",
     "theme": "dark"
@@ -29,6 +29,7 @@
   "activationEvents": [
     "onLanguage:honeycomb-derived"
   ],
+  "repository": "https://github.com/McSick/honeycomb-derived-column-language-extension",
   "main": "./out/extension.js",
   "devDependencies": {
     "@types/node": "^12.12.0",
