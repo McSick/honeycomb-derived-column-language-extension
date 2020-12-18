@@ -1,36 +1,28 @@
-# honeycomb-sli README
+# honeycomb-derived README
 
-This is the README for your extension "honeycomb-sli". After writing up a brief description, we recommend including the following sections.
+Language features for Honeycombe derived columns. Just save a file as .honeycomb and paste in your definition or start writing a new one. Right click for the menu.  Format Document expands column.  Minimize to shrink it down.
 
 ## Features
 
 - Auto Complete
 - Hover Definitions
 - Format Document to Expand
-- Mini
+- Minimize
 
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+- 1.0.0, initial release.
 
 ### 1.0.0
 
 Initial release of Honeycomb Derived Column formatter.  See https://github.com/
 
 
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
 
 -----------------------------------------------------------------------------------------------------------
 
