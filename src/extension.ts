@@ -136,6 +136,32 @@ export function activate(context: ExtensionContext) {
       }
     })
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("extension.pull", () => {
+     
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("extension.push", () => {
+     
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("extension.delete", () => {
+     
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("extension.validate", () => {
+     
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("extension.pullall", () => {
+     
+    })
+  );
 }
 class HoneyCombDocumentFormattingEditProvider
   implements DocumentFormattingEditProvider, OnTypeFormattingEditProvider {

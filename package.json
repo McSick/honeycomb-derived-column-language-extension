@@ -50,6 +50,26 @@
       {
         "command": "extension.minimize",
         "title": "Minimize"
+      },
+      {
+        "command": "extension.pull",
+        "title": "Pull"
+      },
+      {
+        "command": "extension.push",
+        "title": "Push"
+      },
+      {
+        "command": "extension.delete",
+        "title": "Delete"
+      },
+      {
+        "command": "extension.validate",
+        "title": "Validate"
+      },
+      {
+        "command": "extension.pullall",
+        "title": "Pull All"
       }
     ],
     "menus": {
@@ -57,6 +77,38 @@
         {
           "when": "resourceLangId == honeycomb-derived",
           "command": "extension.minimize",
+          "group": "Honeycomb"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "resourceLangId == honeycomb-derived",
+          "command": "extension.minimize",
+          "group": "Honeycomb"
+        },
+        {
+          "when": "resourceLangId == honeycomb-derived",
+          "command": "extension.pull",
+          "group": "Honeycomb"
+        },
+        {
+          "when": "resourceLangId == honeycomb-derived",
+          "command": "extension.push",
+          "group": "Honeycomb"
+        },
+        {
+          "when": "resourceLangId == honeycomb-derived",
+          "command": "extension.delete",
+          "group": "Honeycomb"
+        },
+        {
+          "when": "resourceLangId == honeycomb-derived",
+          "command": "extension.validate",
+          "group": "Honeycomb"
+        },
+        {
+          "when": "resourceLangId == honeycomb-derived",
+          "command": "extension.pullall",
           "group": "Honeycomb"
         }
       ]
