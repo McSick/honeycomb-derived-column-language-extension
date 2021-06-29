@@ -129,7 +129,30 @@ function activate(context) {
             return vscode.workspace.applyEdit(edit);
         }
     }));
-    context.subscriptions.push(vscode.commands.registerCommand("extension.pull", () => {
+    context.subscriptions.push(vscode.commands.registerCommand("extension.pull", (uri) => {
+        let patharr = uri.fsPath.split("/");
+        let alias = patharr[patharr.length - 1].split(".")[0];
+        let dataset = patharr[patharr.length - 2];
+        let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
+        let dataset_settings = { ...config.get("dataset_settings") };
+        let id = dataset_settings[dataset].derived_columns[alias].id || null;
+        if (id) {
+            hnyapi.get_one_derived_column(dataset, id, (dc) => {
+                if (dc.error) {
+                    vscode.window.showErrorMessage(dc.error);
+                }
+                if (dc) {
+                    let col = dc;
+                    saveFile(col, uri.fsPath);
+                    dataset_settings[dataset].derived_columns[dc.alias] = { id: dc.id, description: dc.description };
+                }
+                config.update("dataset_settings", dataset_settings).then((success) => {
+                });
+            });
+        }
+        else {
+            vscode.window.showErrorMessage("ID not saved locally. Please pull all from dataset to get derived column id.");
+        }
     }));
     context.subscriptions.push(vscode.commands.registerCommand("extension.push", (uri) => {
         let patharr = uri.fsPath.split("/");
@@ -219,7 +242,7 @@ function activate(context) {
                 columns.forEach((dc) => {
                     if (dc) {
                         let col = dc;
-                        saveFile(col, uri.fsPath);
+                        saveFile(col, `${uri.fsPath}/${dc.alias}.honeycomb`);
                         dataset_settings[dataset].derived_columns[dc.alias] = { id: dc.id, description: dc.description };
                     }
                 });
@@ -232,7 +255,7 @@ function activate(context) {
 exports.activate = activate;
 function saveFile(column, path) {
     const wsedit = new vscode.WorkspaceEdit();
-    const filePath = vscode.Uri.file(`${path}/${column.alias}.honeycomb`);
+    const filePath = vscode.Uri.file(path);
     wsedit.createFile(filePath, { ignoreIfExists: true });
     wsedit.replace(filePath, new vscode.Range(0, 0, 10000, 0), formatString(minimizeString(column.expression)));
     vscode.workspace.applyEdit(wsedit).then(() => {

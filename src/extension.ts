@@ -200,8 +200,34 @@ export function activate(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.pull", () => {
-     
+    vscode.commands.registerCommand("extension.pull", (uri: vscode.Uri) => {
+      let patharr = uri.fsPath.split("/");
+      let alias = patharr[patharr.length - 1].split(".")[0];
+      let dataset = patharr[patharr.length - 2];
+      let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR)
+      let dataset_settings: any = { ...config.get("dataset_settings") };
+      let id = dataset_settings[dataset].derived_columns[alias].id || null;
+      if (id) {
+        hnyapi.get_one_derived_column(dataset, id, (dc: any) => {
+          
+            if (dc.error) {
+              vscode.window.showErrorMessage(dc.error);
+            }
+            if (dc) {
+              let col = dc as DerivedColumn;
+              saveFile(col, uri.fsPath);
+              dataset_settings[dataset].derived_columns[dc.alias] = { id: dc.id, description: dc.description };
+            }
+  
+  
+            config.update("dataset_settings", dataset_settings).then((success: any) => {
+    
+            });
+          })
+
+      } else {
+        vscode.window.showErrorMessage("ID not saved locally. Please pull all from dataset to get derived column id.");
+      }
     })
   );
   context.subscriptions.push(
@@ -303,7 +329,7 @@ export function activate(context: ExtensionContext) {
           columns.forEach((dc:any) => {
             if (dc) {
               let col = dc as DerivedColumn;
-              saveFile(col, uri.fsPath);
+              saveFile(col,`${uri.fsPath}/${dc.alias}.honeycomb`);
               dataset_settings[dataset].derived_columns[dc.alias] = { id: dc.id, description: dc.description };
             }
   
@@ -320,7 +346,7 @@ export function activate(context: ExtensionContext) {
 
 function saveFile(column: DerivedColumn, path:string) {
   const wsedit = new vscode.WorkspaceEdit();
-  const filePath = vscode.Uri.file(`${path}/${column.alias}.honeycomb`);
+  const filePath = vscode.Uri.file(path);
   wsedit.createFile(filePath,  {ignoreIfExists: true});
   wsedit.replace(
     filePath,
