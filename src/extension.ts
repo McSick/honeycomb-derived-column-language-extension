@@ -214,11 +214,11 @@ export function activate(context: ExtensionContext) {
         let minizedexpression = minimizeString(expression);
 
         let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR)
-        if (config.dataset_settings[dataset][alias]) {
-          let id = config.dataset_settings[dataset][alias].id;
+        if (config.dataset_settings[dataset].derived_columns[alias]) {
+          let id = config.dataset_settings[dataset].derived_columns[alias].id;
           let dc: DerivedColumn = {
             id: id,
-            description: config.dataset_settings[dataset][alias].description,
+            description: config.dataset_settings[dataset].derived_columns[alias].description,
             alias: alias,
             expression: minizedexpression
           }
@@ -241,7 +241,7 @@ export function activate(context: ExtensionContext) {
             }
             if (success.hasOwnProperty("id")) {
               let dataset_settings: any = config.get("dataset_settings");
-              dataset_settings[dataset][success.alias] = { id: success.id, description: success.description };
+              dataset_settings[dataset].derived_columns[success.alias] = { id: success.id, description: success.description };
               vscode.window.showInformationMessage(`Created DerivedColumn ${success.alias} with id ${success.id}`);
               config.update("dataset_settings", dataset_settings).then((success: any) => {
               });
@@ -258,14 +258,14 @@ export function activate(context: ExtensionContext) {
       let dataset = patharr[patharr.length - 2];
       let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR)
       let dataset_settings: any = { ...config.get("dataset_settings") };
-      let id = dataset_settings[dataset][alias].id || null;
+      let id = dataset_settings[dataset].derived_columns[alias].id || null;
       if (id) {
         hnyapi.delete_derived_column(dataset, id, () => {
           vscode.window.showInformationMessage(`Deleted DerivedColumn ${alias}`);
           const wsedit = new vscode.WorkspaceEdit();
           wsedit.deleteFile(uri);
           vscode.workspace.applyEdit(wsedit).then(() => {
-            dataset_settings[dataset][alias] = undefined;
+            dataset_settings[dataset].derived_columns[alias] = undefined;
             config.update("dataset_settings", dataset_settings).then((success: any) => {
             });
           });
@@ -291,13 +291,16 @@ export function activate(context: ExtensionContext) {
         }
         let dataset_settings: any = config.get("dataset_settings");
         if (!dataset_settings.hasOwnProperty(dataset)) {
-          dataset_settings[dataset] = {};
+          dataset_settings[dataset] = {
+            derived_columns: {},
+            columns: {}
+          };
         }
         columns.forEach((dc:any) => {
           if (dc) {
             let col = dc as DerivedColumn;
             saveFile(col, uri.fsPath);
-            dataset_settings[dataset][dc.alias] = { id: dc.id, description: dc.description };
+            dataset_settings[dataset].derived_columns[dc.alias] = { id: dc.id, description: dc.description };
           }
 
         })
