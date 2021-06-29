@@ -20,10 +20,10 @@ export default class HoneycombAPI {
     public get_all_derived_columns(dataset:string, cb:any) {
         this.get(`/1/derived_columns/${dataset}`, cb)
     }
-    public create_new_derived_column(dataset: string, dc_def: any, cb: any) {
+    public create_new_derived_column(dataset: string, dc_def: DerivedColumn, cb: any) {
         this.post(`/1/derived_columns/${dataset}`, dc_def, cb);
     }
-    public update_derived_column(dataset: string, derived_column_id: string, dc_def:any,  cb: any) {
+    public update_derived_column(dataset: string, derived_column_id: string, dc_def:DerivedColumn,  cb: any) {
         this.put(`/1/derived_columns/${dataset}/${derived_column_id}`, dc_def, cb);
     }
     public delete_derived_column(dataset: string, derived_column_id: string, cb?: any) {
@@ -45,23 +45,27 @@ export default class HoneycombAPI {
         var options:any = { ...this.default_options };
         options.path = path;
         options.method = method;
-        if (data) {
-            options.data = JSON.stringify(data);
-        }
         var str = '';
         const req = https.request(options, (res:any) => {
             res.on('data', (body: any) => {
                 str += body;
             });
             res.on('end', () => {
-                return cb(JSON.parse(str));
+                if (str === '') {
+                    return cb();
+                } else {
+                    return cb(JSON.parse(str));
+                }
+
             });
         });
 
         if (data) {
-            req.write(data);
+            req.write(JSON.stringify(data));
         }
-          
+        req.on('error', (err: any) => {
+            console.error(err);
+        });
         req.end();
 
     }

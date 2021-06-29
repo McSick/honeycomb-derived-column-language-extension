@@ -33,7 +33,8 @@
     "watch": "tsc -watch -p ./"
   },
   "activationEvents": [
-    "onLanguage:honeycomb-derived"
+    "onLanguage:honeycomb-derived",
+    "onStartupFinished"
   ],
   "repository": "https://github.com/McSick/honeycomb-derived-column-language-extension",
   "main": "./out/extension.js",
@@ -73,7 +74,7 @@
       }
     ],
     "configuration": {
-      "title": "honeycomb-derived",
+      "title": "Honeycomb Derviced Columns",
       "properties": {
         "honeycomb-derived.apikey": { 
           "type": "string",
@@ -85,10 +86,10 @@
           "default": "api.honeycomb.io",
           "description": "Honeycomb api url"
         },
-        "honeycomb-derived.datasets": { 
-          "type": ["array"],
-          "default": [],
-          "description": "Your Honeycomb Datasets to load derived columns from"
+        "honeycomb-derived.dataset_settings": { 
+          "type": "object",
+          "default": {},
+          "description": "Dataset settings like column names & derived column id's"
         }
       }
     },

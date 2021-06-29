@@ -43,21 +43,26 @@ class HoneycombAPI {
         var options = { ...this.default_options };
         options.path = path;
         options.method = method;
-        if (data) {
-            options.data = JSON.stringify(data);
-        }
         var str = '';
         const req = https.request(options, (res) => {
             res.on('data', (body) => {
                 str += body;
             });
             res.on('end', () => {
-                return cb(JSON.parse(str));
+                if (str === '') {
+                    return cb();
+                }
+                else {
+                    return cb(JSON.parse(str));
+                }
             });
         });
         if (data) {
-            req.write(data);
+            req.write(JSON.stringify(data));
         }
+        req.on('error', (err) => {
+            console.error(err);
+        });
         req.end();
     }
 }

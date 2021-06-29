@@ -6,8 +6,7 @@ const HoneycombAPI_1 = require("./HoneycombAPI");
 const vscode_1 = require("vscode");
 const textdefinitions_1 = require("./textdefinitions");
 const HONEYCOMB_SELECTOR = "honeycomb-derived";
-const config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
-var hnyapi = new HoneycombAPI_1.default(config.apikey);
+var hnyapi = new HoneycombAPI_1.default(vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR).apikey);
 // const MINIFYREGEX = /\s+(?=((\\[\\"`']|[^\\"^`'])*[`'"](\\[\\"`']|[^\\"^`'])*["'`])*(\\[\\"'`]|[^\\"^`'])*$)/g;
 // const regextest = /(?=\S)[^"\s]*(?:"[^\\"]*(?:\\[  ][^\\"]*)*"[^"\s]*)*/g;
 //REGEX is hard.  For loop FTW
@@ -110,7 +109,14 @@ function activate(context) {
     context.subscriptions.push(vscode.languages.registerSignatureHelpProvider(HONEYCOMB_SELECTOR, new HoneCombSignatureProvider()));
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(HONEYCOMB_SELECTOR, new HoneyCombItemProvider(), "\\u0008", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"));
     context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(HONEYCOMB_SELECTOR, new HoneyCombDocumentFormattingEditProvider()));
-    context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider(HONEYCOMB_SELECTOR, new HoneyCombDocumentFormattingEditProvider(), "\n", ","));
+    // context.subscriptions.push(
+    //   vscode.languages.registerOnTypeFormattingEditProvider(
+    //     HONEYCOMB_SELECTOR,
+    //     new HoneyCombDocumentFormattingEditProvider(),
+    //     "\n",
+    //     ","
+    //   )
+    // );
     context.subscriptions.push(vscode.commands.registerCommand("extension.minimize", () => {
         const { activeTextEditor } = vscode.window;
         if (activeTextEditor &&
@@ -125,23 +131,95 @@ function activate(context) {
     }));
     context.subscriptions.push(vscode.commands.registerCommand("extension.pull", () => {
     }));
-    context.subscriptions.push(vscode.commands.registerCommand("extension.push", () => {
+    context.subscriptions.push(vscode.commands.registerCommand("extension.push", (uri) => {
+        let patharr = uri.fsPath.split("/");
+        let alias = patharr[patharr.length - 1].split(".")[0];
+        let dataset = patharr[patharr.length - 2];
+        vscode_1.workspace.openTextDocument(uri.fsPath).then((document) => {
+            let expression = document.getText();
+            let minizedexpression = minimizeString(expression);
+            let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
+            if (config.dataset_settings[dataset][alias]) {
+                let id = config.dataset_settings[dataset][alias].id;
+                let dc = {
+                    id: id,
+                    description: config.dataset_settings[dataset][alias].description,
+                    alias: alias,
+                    expression: minizedexpression
+                };
+                hnyapi.update_derived_column(dataset, id, dc, (success) => {
+                    if (success.error) {
+                        vscode.window.showErrorMessage(success.error);
+                    }
+                    else {
+                        vscode.window.showInformationMessage(`Updated DerivedColumn ${success.alias}`);
+                    }
+                });
+            }
+            else {
+                let dc = {
+                    description: "",
+                    alias: alias,
+                    expression: minizedexpression
+                };
+                hnyapi.create_new_derived_column(dataset, dc, (success) => {
+                    if (success.error) {
+                        vscode.window.showErrorMessage(success.error);
+                    }
+                    if (success.hasOwnProperty("id")) {
+                        let dataset_settings = config.get("dataset_settings");
+                        dataset_settings[dataset][success.alias] = { id: success.id, description: success.description };
+                        vscode.window.showInformationMessage(`Created DerivedColumn ${success.alias} with id ${success.id}`);
+                        config.update("dataset_settings", dataset_settings).then((success) => {
+                        });
+                    }
+                });
+            }
+        });
     }));
-    context.subscriptions.push(vscode.commands.registerCommand("extension.delete", () => {
+    context.subscriptions.push(vscode.commands.registerCommand("extension.delete", (uri) => {
+        let patharr = uri.fsPath.split("/");
+        let alias = patharr[patharr.length - 1].split(".")[0];
+        let dataset = patharr[patharr.length - 2];
+        let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
+        let dataset_settings = { ...config.get("dataset_settings") };
+        let id = dataset_settings[dataset][alias].id || null;
+        if (id) {
+            hnyapi.delete_derived_column(dataset, id, () => {
+                vscode.window.showInformationMessage(`Deleted DerivedColumn ${alias}`);
+                const wsedit = new vscode.WorkspaceEdit();
+                wsedit.deleteFile(uri);
+                vscode.workspace.applyEdit(wsedit).then(() => {
+                    dataset_settings[dataset][alias] = undefined;
+                    config.update("dataset_settings", dataset_settings).then((success) => {
+                    });
+                });
+            });
+        }
     }));
     context.subscriptions.push(vscode.commands.registerCommand("extension.validate", (uri) => {
     }));
     context.subscriptions.push(vscode.commands.registerCommand("extension.pullall", (uri) => {
         let patharr = uri.fsPath.split("/");
         let dataset = patharr[patharr.length - 1];
+        let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
         hnyapi.get_all_derived_columns(dataset, (columns) => {
+            if (columns.error) {
+                vscode.window.showErrorMessage(columns.error);
+            }
+            let dataset_settings = config.get("dataset_settings");
+            if (!dataset_settings.hasOwnProperty(dataset)) {
+                dataset_settings[dataset] = {};
+            }
             columns.forEach((dc) => {
                 if (dc) {
                     let col = dc;
                     saveFile(col, uri.fsPath);
+                    dataset_settings[dataset][dc.alias] = { id: dc.id, description: dc.description };
                 }
             });
-            console.log(columns);
+            config.update("dataset_settings", dataset_settings).then((success) => {
+            });
         });
     }));
 }
@@ -149,9 +227,15 @@ exports.activate = activate;
 function saveFile(column, path) {
     const wsedit = new vscode.WorkspaceEdit();
     const filePath = vscode.Uri.file(`${path}/${column.alias}.honeycomb`);
-    wsedit.createFile(filePath, { overwrite: true });
-    wsedit.insert(filePath, new vscode.Position(0, 0), formatString(minimizeString(column.expression)));
-    vscode.workspace.applyEdit(wsedit);
+    wsedit.createFile(filePath, { ignoreIfExists: true });
+    wsedit.replace(filePath, new vscode.Range(0, 0, 10000, 0), formatString(minimizeString(column.expression)));
+    vscode.workspace.applyEdit(wsedit).then(() => {
+        vscode.workspace.openTextDocument(filePath).then((doc) => {
+            if (doc.isDirty) {
+                doc.save();
+            }
+        });
+    });
 }
 class HoneyCombDocumentFormattingEditProvider {
     provideDocumentFormattingEdits(document, options, token) {

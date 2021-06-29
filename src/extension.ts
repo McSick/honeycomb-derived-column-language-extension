@@ -24,12 +24,13 @@ import {
   FormattingOptions,
   MarkdownString,
   OnTypeFormattingEditProvider,
+  workspace,
 } from "vscode";
 import DEFINITIONS from "./textdefinitions";
+import { config } from "process";
 
 const HONEYCOMB_SELECTOR = "honeycomb-derived";
-const config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
-var hnyapi:HoneycombAPI = new HoneycombAPI(config.apikey);
+var hnyapi:HoneycombAPI = new HoneycombAPI(vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR).apikey);
 
 // const MINIFYREGEX = /\s+(?=((\\[\\"`']|[^\\"^`'])*[`'"](\\[\\"`']|[^\\"^`'])*["'`])*(\\[\\"'`]|[^\\"^`'])*$)/g;
 
@@ -171,14 +172,14 @@ export function activate(context: ExtensionContext) {
       new HoneyCombDocumentFormattingEditProvider()
     )
   );
-  context.subscriptions.push(
-    vscode.languages.registerOnTypeFormattingEditProvider(
-      HONEYCOMB_SELECTOR,
-      new HoneyCombDocumentFormattingEditProvider(),
-      "\n",
-      ","
-    )
-  );
+  // context.subscriptions.push(
+  //   vscode.languages.registerOnTypeFormattingEditProvider(
+  //     HONEYCOMB_SELECTOR,
+  //     new HoneyCombDocumentFormattingEditProvider(),
+  //     "\n",
+  //     ","
+  //   )
+  // );
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.minimize", () => {
       const { activeTextEditor } = vscode.window;
@@ -204,43 +205,127 @@ export function activate(context: ExtensionContext) {
     })
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.push", () => {
-     
+    vscode.commands.registerCommand("extension.push", (uri: vscode.Uri) => {
+      let patharr = uri.fsPath.split("/");
+      let alias = patharr[patharr.length - 1].split(".")[0];
+      let dataset = patharr[patharr.length - 2];
+      workspace.openTextDocument(uri.fsPath).then((document: TextDocument) => {
+        let expression:string = document.getText();
+        let minizedexpression = minimizeString(expression);
+
+        let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR)
+        if (config.dataset_settings[dataset][alias]) {
+          let id = config.dataset_settings[dataset][alias].id;
+          let dc: DerivedColumn = {
+            id: id,
+            description: config.dataset_settings[dataset][alias].description,
+            alias: alias,
+            expression: minizedexpression
+          }
+          hnyapi.update_derived_column(dataset, id, dc, (success: any) => {
+            if (success.error) {
+              vscode.window.showErrorMessage(success.error);
+            } else {
+              vscode.window.showInformationMessage(`Updated DerivedColumn ${success.alias}`);
+            }
+           });
+        } else {
+          let dc: DerivedColumn = {
+            description: "",
+            alias: alias,
+            expression: minizedexpression
+          }
+          hnyapi.create_new_derived_column(dataset, dc, (success: any) => {
+            if (success.error) {
+              vscode.window.showErrorMessage(success.error);
+            }
+            if (success.hasOwnProperty("id")) {
+              let dataset_settings: any = config.get("dataset_settings");
+              dataset_settings[dataset][success.alias] = { id: success.id, description: success.description };
+              vscode.window.showInformationMessage(`Created DerivedColumn ${success.alias} with id ${success.id}`);
+              config.update("dataset_settings", dataset_settings).then((success: any) => {
+              });
+            }
+          });
+        }
+      })
     })
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.delete", () => {
-     
+    vscode.commands.registerCommand("extension.delete", (uri: vscode.Uri) => {
+      let patharr = uri.fsPath.split("/");
+      let alias = patharr[patharr.length - 1].split(".")[0];
+      let dataset = patharr[patharr.length - 2];
+      let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR)
+      let dataset_settings: any = { ...config.get("dataset_settings") };
+      let id = dataset_settings[dataset][alias].id || null;
+      if (id) {
+        hnyapi.delete_derived_column(dataset, id, () => {
+          vscode.window.showInformationMessage(`Deleted DerivedColumn ${alias}`);
+          const wsedit = new vscode.WorkspaceEdit();
+          wsedit.deleteFile(uri);
+          vscode.workspace.applyEdit(wsedit).then(() => {
+            dataset_settings[dataset][alias] = undefined;
+            config.update("dataset_settings", dataset_settings).then((success: any) => {
+            });
+          });
+
+        });
+      }
     })
   );
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.validate", (uri: vscode.Uri) => {
-
+     
+      
     })
   );
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.pullall", (uri: vscode.Uri) => {
       let patharr = uri.fsPath.split("/");
       let dataset = patharr[patharr.length - 1];
+      let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR)
       hnyapi.get_all_derived_columns(dataset, (columns: any) => {
+        if (columns.error) {
+          vscode.window.showErrorMessage(columns.error);
+        }
+        let dataset_settings: any = config.get("dataset_settings");
+        if (!dataset_settings.hasOwnProperty(dataset)) {
+          dataset_settings[dataset] = {};
+        }
         columns.forEach((dc:any) => {
           if (dc) {
             let col = dc as DerivedColumn;
             saveFile(col, uri.fsPath);
+            dataset_settings[dataset][dc.alias] = { id: dc.id, description: dc.description };
           }
 
         })
-        console.log(columns);
+        config.update("dataset_settings", dataset_settings).then((success: any) => {
+
+        });
       })
     })
   );
 }
+
 function saveFile(column: DerivedColumn, path:string) {
   const wsedit = new vscode.WorkspaceEdit();
   const filePath = vscode.Uri.file(`${path}/${column.alias}.honeycomb`);
-  wsedit.createFile(filePath, { overwrite: true });
-  wsedit.insert(filePath, new vscode.Position(0, 0), formatString(minimizeString(column.expression)));
-  vscode.workspace.applyEdit(wsedit);
+  wsedit.createFile(filePath,  {ignoreIfExists: true});
+  wsedit.replace(
+    filePath,
+    new vscode.Range(0, 0, 10000, 0),
+    formatString(minimizeString(column.expression)));
+
+  vscode.workspace.applyEdit(wsedit).then(() => {
+    vscode.workspace.openTextDocument(filePath).then((doc: TextDocument) => {
+      if (doc.isDirty) {
+        doc.save();
+        }
+    });
+  });
+
 }
 class HoneyCombDocumentFormattingEditProvider
   implements DocumentFormattingEditProvider, OnTypeFormattingEditProvider {
