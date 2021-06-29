@@ -284,30 +284,36 @@ export function activate(context: ExtensionContext) {
     vscode.commands.registerCommand("extension.pullall", (uri: vscode.Uri) => {
       let patharr = uri.fsPath.split("/");
       let dataset = patharr[patharr.length - 1];
-      let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR)
-      hnyapi.get_all_derived_columns(dataset, (columns: any) => {
-        if (columns.error) {
-          vscode.window.showErrorMessage(columns.error);
-        }
-        let dataset_settings: any = config.get("dataset_settings");
-        if (!dataset_settings.hasOwnProperty(dataset)) {
-          dataset_settings[dataset] = {
-            derived_columns: {},
-            columns: {}
-          };
-        }
-        columns.forEach((dc:any) => {
-          if (dc) {
-            let col = dc as DerivedColumn;
-            saveFile(col, uri.fsPath);
-            dataset_settings[dataset].derived_columns[dc.alias] = { id: dc.id, description: dc.description };
+      let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
+      let dataset_settings: any = config.get("dataset_settings");
+      if (!dataset_settings.hasOwnProperty(dataset)) {
+        dataset_settings[dataset] = {
+          derived_columns: {},
+          columns: {}
+        };
+      }
+      hnyapi.get_all_columns(dataset, (dataset_columns: any) => {
+        dataset_settings[dataset].columns = dataset_columns;
+        hnyapi.get_all_derived_columns(dataset, (columns: any) => {
+          if (columns.error) {
+            vscode.window.showErrorMessage(columns.error);
           }
+          
 
+          columns.forEach((dc:any) => {
+            if (dc) {
+              let col = dc as DerivedColumn;
+              saveFile(col, uri.fsPath);
+              dataset_settings[dataset].derived_columns[dc.alias] = { id: dc.id, description: dc.description };
+            }
+  
+          })
+          config.update("dataset_settings", dataset_settings).then((success: any) => {
+  
+          });
         })
-        config.update("dataset_settings", dataset_settings).then((success: any) => {
+      });
 
-        });
-      })
     })
   );
 }
@@ -375,9 +381,45 @@ class HoneyCombItemProvider implements CompletionItemProvider {
     position: Position,
     token: CancellationToken
   ): ProviderResult<CompletionItem[]> {
+    let fsPath = document.fileName;
+
+    let patharr = fsPath.split("/");
+    let alias = patharr[patharr.length - 1].split(".")[0];
+    let dataset = patharr[patharr.length - 2];
+    let config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
+
+
     let range = document.getWordRangeAtPosition(position);
     const word = document.getText(range);
     var result: CompletionItem[] = [];
+
+    if (config.dataset_settings[dataset]) {
+      
+      let cols = config.dataset_settings[dataset].columns;
+      cols.forEach((col: any) => {
+
+        if (col.key_name.includes(word)) {
+          var completionitem = new CompletionItem(
+            col.key_name,
+            CompletionItemKind.Variable
+          );
+          completionitem.documentation = new MarkdownString(
+            `${col.key_name}:${col.type}   \n\n${col.description}`,
+            true
+          );
+          if (col.key_name.includes(" ")) {
+            completionitem.insertText = `$"${col.key_name}"`;
+          } else {
+            completionitem.insertText = `$${col.key_name}`;
+          }
+          
+  
+          result.push(completionitem);
+        }
+
+      })
+    }
+
     let foundkeys: string[] = this.keys.filter((key) => {
       return key.includes(word);
     });
