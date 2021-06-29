@@ -69,9 +69,29 @@
       },
       {
         "command": "extension.pullall",
-        "title": "Pull All"
+        "title": "Pull From Dataset"
       }
     ],
+    "configuration": {
+      "title": "honeycomb-derived",
+      "properties": {
+        "honeycomb-derived.apikey": { 
+          "type": "string",
+          "default": "",
+          "description": "Your Honeycomb API Key with the permissions of \"Manage Queries and Columns\""
+        },
+        "honeycomb-derived.apiurl": { 
+          "type": "string",
+          "default": "api.honeycomb.io",
+          "description": "Honeycomb api url"
+        },
+        "honeycomb-derived.datasets": { 
+          "type": ["array"],
+          "default": [],
+          "description": "Your Honeycomb Datasets to load derived columns from"
+        }
+      }
+    },
     "menus": {
       "editor/context": [
         {
@@ -107,7 +127,7 @@
           "group": "Honeycomb"
         },
         {
-          "when": "resourceLangId == honeycomb-derived",
+
           "command": "extension.pullall",
           "group": "Honeycomb"
         }

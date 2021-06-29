@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import { info } from "console";
 import * as vscode from "vscode";
+import HoneycombAPI from './HoneycombAPI';
 
 import {
   TextDocument,
@@ -19,15 +20,20 @@ import {
   CompletionItemKind,
   DocumentFormattingEditProvider,
   TextEdit,
+  Range,
   FormattingOptions,
   MarkdownString,
   OnTypeFormattingEditProvider,
 } from "vscode";
 import DEFINITIONS from "./textdefinitions";
+
 const HONEYCOMB_SELECTOR = "honeycomb-derived";
+const config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
+var hnyapi:HoneycombAPI = new HoneycombAPI(config.apikey);
+
 // const MINIFYREGEX = /\s+(?=((\\[\\"`']|[^\\"^`'])*[`'"](\\[\\"`']|[^\\"^`'])*["'`])*(\\[\\"'`]|[^\\"^`'])*$)/g;
 
-// const regextest = /(?=\S)[^"\s]*(?:"[^\\"]*(?:\\[\s\S][^\\"]*)*"[^"\s]*)*/g;
+// const regextest = /(?=\S)[^"\s]*(?:"[^\\"]*(?:\\[  ][^\\"]*)*"[^"\s]*)*/g;
 //REGEX is hard.  For loop FTW
 function minimizeString(s: string): string {
   let newstring = "";
@@ -53,12 +59,67 @@ function minimizeString(s: string): string {
   }
   return newstring;
 }
+function formatString(minifiedtext: string) {
+  let paren = 0;
+  let result = "";
+  let inquote = false;
+  let inquote_start_chart = "";
+  for (var i = 0; i < minifiedtext.length; i++) {
+    let charat = minifiedtext[i];
+    if (charat == '"' || charat == "`") {
+      if (!inquote) {
+        inquote = true;
+        inquote_start_chart = charat;
+      } else if (inquote_start_chart == charat) {
+        inquote = false;
+        inquote_start_chart = "";
+      }
+      result += charat;
+      continue;
+    }
+    if (inquote) {
+      result += charat;
+    } else if (charat == ",") {
+      result += charat + "\n" + "\t".repeat(paren);
+    } else if (charat == "(") {
+      paren++;
+      if (i < minifiedtext.length - 1) {
+        if (minifiedtext[i + 1] == ")") {
+          i++;
+          paren--;
+          result += charat + ")";
+        } else {
+          result += charat + "\n" + "\t".repeat(paren);
+        }
+      } else {
+        result += charat + "\n" + "\t".repeat(paren);
+      }
+    } else if (charat == ")") {
+      paren--;
+      if (i < minifiedtext.length - 1) {
+        if (minifiedtext[i + 1] == ",") {
+          result += "\n" + "\t".repeat(paren) + charat + ",\n";
+          i++;
+          result += "\t".repeat(paren);
+        } else {
+          result += "\n" + "\t".repeat(paren) + charat;
+        }
+      } else {
+        result += "\n" + "\t".repeat(paren) + charat + "\n";
+      }
+    } else {
+      result += charat;
+    }
+  }
+  return result;
+}
 
 // import { workspace, Disposable, ExtensionContext } from 'vscode';
 // import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
+
   context.subscriptions.push(
     vscode.languages.registerHoverProvider(
       HONEYCOMB_SELECTOR,
@@ -153,15 +214,33 @@ export function activate(context: ExtensionContext) {
     })
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.validate", () => {
-     
+    vscode.commands.registerCommand("extension.validate", (uri: vscode.Uri) => {
+
     })
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.pullall", () => {
-     
+    vscode.commands.registerCommand("extension.pullall", (uri: vscode.Uri) => {
+      let patharr = uri.fsPath.split("/");
+      let dataset = patharr[patharr.length - 1];
+      hnyapi.get_all_derived_columns(dataset, (columns: any) => {
+        columns.forEach((dc:any) => {
+          if (dc) {
+            let col = dc as DerivedColumn;
+            saveFile(col, uri.fsPath);
+          }
+
+        })
+        console.log(columns);
+      })
     })
   );
+}
+function saveFile(column: DerivedColumn, path:string) {
+  const wsedit = new vscode.WorkspaceEdit();
+  const filePath = vscode.Uri.file(`${path}/${column.alias}.honeycomb`);
+  wsedit.createFile(filePath, { overwrite: true });
+  wsedit.insert(filePath, new vscode.Position(0, 0), formatString(minimizeString(column.expression)));
+  vscode.workspace.applyEdit(wsedit);
 }
 class HoneyCombDocumentFormattingEditProvider
   implements DocumentFormattingEditProvider, OnTypeFormattingEditProvider {
@@ -198,58 +277,7 @@ class HoneyCombDocumentFormattingEditProvider
     return minimizeString(text);
   }
   private format(minifiedtext: string) {
-    let paren = 0;
-    let result = "";
-    let inquote = false;
-    let inquote_start_chart = "";
-    for (var i = 0; i < minifiedtext.length; i++) {
-      let charat = minifiedtext[i];
-      if (charat == '"' || charat == "`") {
-        if (!inquote) {
-          inquote = true;
-          inquote_start_chart = charat;
-        } else if (inquote_start_chart == charat) {
-          inquote = false;
-          inquote_start_chart = "";
-        }
-        result += charat;
-        continue;
-      }
-      if (inquote) {
-        result += charat;
-      } else if (charat == ",") {
-        result += charat + "\n" + "\t".repeat(paren);
-      } else if (charat == "(") {
-        paren++;
-        if (i < minifiedtext.length - 1) {
-          if (minifiedtext[i + 1] == ")") {
-            i++;
-            paren--;
-            result += charat + ")";
-          } else {
-            result += charat + "\n" + "\t".repeat(paren);
-          }
-        } else {
-          result += charat + "\n" + "\t".repeat(paren);
-        }
-      } else if (charat == ")") {
-        paren--;
-        if (i < minifiedtext.length - 1) {
-          if (minifiedtext[i + 1] == ",") {
-            result += "\n" + "\t".repeat(paren) + charat + ",\n";
-            i++;
-            result += "\t".repeat(paren);
-          } else {
-            result += "\n" + "\t".repeat(paren) + charat;
-          }
-        } else {
-          result += "\n" + "\t".repeat(paren) + charat + "\n";
-        }
-      } else {
-        result += charat;
-      }
-    }
-    return result;
+    return formatString(minifiedtext);
   }
 }
 class HoneyCombItemProvider implements CompletionItemProvider {

@@ -2,11 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = void 0;
 const vscode = require("vscode");
+const HoneycombAPI_1 = require("./HoneycombAPI");
 const vscode_1 = require("vscode");
 const textdefinitions_1 = require("./textdefinitions");
 const HONEYCOMB_SELECTOR = "honeycomb-derived";
+const config = vscode.workspace.getConfiguration(HONEYCOMB_SELECTOR);
+var hnyapi = new HoneycombAPI_1.default(config.apikey);
 // const MINIFYREGEX = /\s+(?=((\\[\\"`']|[^\\"^`'])*[`'"](\\[\\"`']|[^\\"^`'])*["'`])*(\\[\\"'`]|[^\\"^`'])*$)/g;
-// const regextest = /(?=\S)[^"\s]*(?:"[^\\"]*(?:\\[\s\S][^\\"]*)*"[^"\s]*)*/g;
+// const regextest = /(?=\S)[^"\s]*(?:"[^\\"]*(?:\\[  ][^\\"]*)*"[^"\s]*)*/g;
 //REGEX is hard.  For loop FTW
 function minimizeString(s) {
     let newstring = "";
@@ -35,6 +38,69 @@ function minimizeString(s) {
     }
     return newstring;
 }
+function formatString(minifiedtext) {
+    let paren = 0;
+    let result = "";
+    let inquote = false;
+    let inquote_start_chart = "";
+    for (var i = 0; i < minifiedtext.length; i++) {
+        let charat = minifiedtext[i];
+        if (charat == '"' || charat == "`") {
+            if (!inquote) {
+                inquote = true;
+                inquote_start_chart = charat;
+            }
+            else if (inquote_start_chart == charat) {
+                inquote = false;
+                inquote_start_chart = "";
+            }
+            result += charat;
+            continue;
+        }
+        if (inquote) {
+            result += charat;
+        }
+        else if (charat == ",") {
+            result += charat + "\n" + "\t".repeat(paren);
+        }
+        else if (charat == "(") {
+            paren++;
+            if (i < minifiedtext.length - 1) {
+                if (minifiedtext[i + 1] == ")") {
+                    i++;
+                    paren--;
+                    result += charat + ")";
+                }
+                else {
+                    result += charat + "\n" + "\t".repeat(paren);
+                }
+            }
+            else {
+                result += charat + "\n" + "\t".repeat(paren);
+            }
+        }
+        else if (charat == ")") {
+            paren--;
+            if (i < minifiedtext.length - 1) {
+                if (minifiedtext[i + 1] == ",") {
+                    result += "\n" + "\t".repeat(paren) + charat + ",\n";
+                    i++;
+                    result += "\t".repeat(paren);
+                }
+                else {
+                    result += "\n" + "\t".repeat(paren) + charat;
+                }
+            }
+            else {
+                result += "\n" + "\t".repeat(paren) + charat + "\n";
+            }
+        }
+        else {
+            result += charat;
+        }
+    }
+    return result;
+}
 // import { workspace, Disposable, ExtensionContext } from 'vscode';
 // import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 // this method is called when your extension is activated
@@ -57,8 +123,36 @@ function activate(context) {
             return vscode.workspace.applyEdit(edit);
         }
     }));
+    context.subscriptions.push(vscode.commands.registerCommand("extension.pull", () => {
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand("extension.push", () => {
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand("extension.delete", () => {
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand("extension.validate", (uri) => {
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand("extension.pullall", (uri) => {
+        let patharr = uri.fsPath.split("/");
+        let dataset = patharr[patharr.length - 1];
+        hnyapi.get_all_derived_columns(dataset, (columns) => {
+            columns.forEach((dc) => {
+                if (dc) {
+                    let col = dc;
+                    saveFile(col, uri.fsPath);
+                }
+            });
+            console.log(columns);
+        });
+    }));
 }
 exports.activate = activate;
+function saveFile(column, path) {
+    const wsedit = new vscode.WorkspaceEdit();
+    const filePath = vscode.Uri.file(`${path}/${column.alias}.honeycomb`);
+    wsedit.createFile(filePath, { overwrite: true });
+    wsedit.insert(filePath, new vscode.Position(0, 0), formatString(minimizeString(column.expression)));
+    vscode.workspace.applyEdit(wsedit);
+}
 class HoneyCombDocumentFormattingEditProvider {
     provideDocumentFormattingEdits(document, options, token) {
         var doctext = document.getText();
@@ -80,67 +174,7 @@ class HoneyCombDocumentFormattingEditProvider {
         return minimizeString(text);
     }
     format(minifiedtext) {
-        let paren = 0;
-        let result = "";
-        let inquote = false;
-        let inquote_start_chart = "";
-        for (var i = 0; i < minifiedtext.length; i++) {
-            let charat = minifiedtext[i];
-            if (charat == '"' || charat == "`") {
-                if (!inquote) {
-                    inquote = true;
-                    inquote_start_chart = charat;
-                }
-                else if (inquote_start_chart == charat) {
-                    inquote = false;
-                    inquote_start_chart = "";
-                }
-                result += charat;
-                continue;
-            }
-            if (inquote) {
-                result += charat;
-            }
-            else if (charat == ",") {
-                result += charat + "\n" + "\t".repeat(paren);
-            }
-            else if (charat == "(") {
-                paren++;
-                if (i < minifiedtext.length - 1) {
-                    if (minifiedtext[i + 1] == ")") {
-                        i++;
-                        paren--;
-                        result += charat + ")";
-                    }
-                    else {
-                        result += charat + "\n" + "\t".repeat(paren);
-                    }
-                }
-                else {
-                    result += charat + "\n" + "\t".repeat(paren);
-                }
-            }
-            else if (charat == ")") {
-                paren--;
-                if (i < minifiedtext.length - 1) {
-                    if (minifiedtext[i + 1] == ",") {
-                        result += "\n" + "\t".repeat(paren) + charat + ",\n";
-                        i++;
-                        result += "\t".repeat(paren);
-                    }
-                    else {
-                        result += "\n" + "\t".repeat(paren) + charat;
-                    }
-                }
-                else {
-                    result += "\n" + "\t".repeat(paren) + charat + "\n";
-                }
-            }
-            else {
-                result += charat;
-            }
-        }
-        return result;
+        return formatString(minifiedtext);
     }
 }
 class HoneyCombItemProvider {
