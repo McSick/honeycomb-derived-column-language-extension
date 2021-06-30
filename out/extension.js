@@ -158,6 +158,7 @@ function activate(context) {
                     if (query_result.id) {
                         hnyapi.get_query_result(dataset, query_result.id, (query_data_result) => {
                             if (query_data_result.error) {
+                                vscode.window.showErrorMessage(query_data_result.error);
                             }
                             else {
                                 let data = query_data_result.data.results;
@@ -178,12 +179,18 @@ function activate(context) {
                         });
                     }
                     else if (query_result.error) {
+                        vscode.window.showErrorMessage(query_result.error);
+                    }
+                    else {
+                        vscode.window.showErrorMessage("Something went wrong");
                     }
                 });
             }
             else if (query.error) {
+                vscode.window.showErrorMessage(query.error);
             }
             else {
+                vscode.window.showErrorMessage("Something went wrong");
             }
         });
     }));
