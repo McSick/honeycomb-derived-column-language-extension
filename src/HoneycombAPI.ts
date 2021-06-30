@@ -32,6 +32,28 @@ export default class HoneycombAPI {
     public delete_derived_column(dataset: string, derived_column_id: string, cb?: any) {
         this.delete(`/1/derived_columns/${dataset}/${derived_column_id}`, cb);
     }
+    public create_query(dataset: string, query: any, cb: any) {
+        this.post(`/1/queries/${dataset}`, query, cb);
+    }
+    public create_query_result(dataset: string, queryid: any, cb: any) {
+        this.post(`/1/query_results/${dataset}`, { query_id: queryid }, cb);
+    }
+    public get_query_result(dataset: string, id: string, cb: any) {
+        this.pollresults(dataset, id, cb);
+    }
+    private pollresults(dataset: string, id: string, cb: any) {
+        this.get(`/1/query_results/${dataset}/${id}`, (r: any) => {
+            if (r.error) {
+                cb(r);
+            } else if (r.complete) {
+                cb(r);
+            } else {
+                setTimeout(() => {
+                    this.pollresults(dataset, id, cb);
+                }, 500);
+            }
+        });
+    }
     private get(path:string, cb:any) {
         this.request(cb, path, 'GET');
     }
