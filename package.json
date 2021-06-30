@@ -104,36 +104,54 @@
       "explorer/context": [
         {
           "when": "resourceLangId == honeycomb-derived",
+          "submenu": "honeycomb.derived-column",
+          "group": "Honeycomb"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "submenu": "honeycomb.dataset",
+          "group": "Honeycomb"
+        }
+      ],
+      "honeycomb.derived-column": [
+        {
           "command": "extension.minimize",
           "group": "Honeycomb"
         },
         {
-          "when": "resourceLangId == honeycomb-derived",
           "command": "extension.pull",
           "group": "Honeycomb"
         },
         {
-          "when": "resourceLangId == honeycomb-derived",
           "command": "extension.push",
           "group": "Honeycomb"
         },
         {
-          "when": "resourceLangId == honeycomb-derived",
           "command": "extension.delete",
           "group": "Honeycomb"
         },
         {
-          "when": "resourceLangId == honeycomb-derived",
           "command": "extension.validate",
           "group": "Honeycomb"
-        },
+        }        
+      ],
+      "honeycomb.dataset": [
         {
-
           "command": "extension.pullall",
           "group": "Honeycomb"
-        }
+        }          
       ]
     },
+    "submenus": [
+      {
+        "id": "honeycomb.derived-column",
+        "label": "Honeycomb"
+      },        
+      {
+        "id": "honeycomb.dataset",
+        "label": "Honeycomb"
+      }    
+    ],
     "languages": [
       {
         "id": "honeycomb-derived",
