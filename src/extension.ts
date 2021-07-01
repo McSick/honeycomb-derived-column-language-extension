@@ -245,8 +245,7 @@ export function activate(context: ExtensionContext) {
                     }
                     vscode.commands.executeCommand('HoneycombResult.show', table, dataset, query_data_result.id);
                     vscode.window.showInformationMessage(table);
-                    
-                    console.log(data);
+                  
                   }
                       
                     

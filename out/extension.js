@@ -174,7 +174,6 @@ function activate(context) {
                                 }
                                 vscode.commands.executeCommand('HoneycombResult.show', table, dataset, query_data_result.id);
                                 vscode.window.showInformationMessage(table);
-                                console.log(data);
                             }
                         });
                     }
