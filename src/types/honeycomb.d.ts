@@ -4,6 +4,10 @@ interface DerivedColumn  {
     expression: string;
     alias: string;
 }
+
+interface HoneycombError {
+    error: string;
+}
 // interface Query {
 //     breakdowns?: string[];
 //     calculations: ;
