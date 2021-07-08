@@ -58,7 +58,7 @@ export default class HoneycombController {
                     window.showErrorMessage(dc.error);
                 } else if (dc) {
                     let col = dc as DerivedColumn;
-                    this.saveDerivedColumnToSource(col, uri.fsPath);
+                    HoneycombController.saveDerivedColumnToSource(col, uri.fsPath);
                     dataset_settings[dataset].derived_columns[dc.alias] = { id: dc.id, description: dc.description };
                 }
 

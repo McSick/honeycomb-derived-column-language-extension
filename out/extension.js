@@ -30,7 +30,7 @@ function activate(context) {
     context.subscriptions.push(vscode.languages.registerSignatureHelpProvider(Config_1.default.HONEYCOMB_SELECTOR, new HoneyCombSignatureProvider_1.default()));
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(Config_1.default.HONEYCOMB_SELECTOR, new HoneyCombItemProvider_1.default(), "\\u0008", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"));
     context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(Config_1.default.HONEYCOMB_SELECTOR, new HoneyCombDocumentFormattingEditProvider_1.default()));
-    context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider(Config_1.default.HONEYCOMB_SELECTOR, new HoneyCombDocumentFormattingEditProvider_1.default(), "\n", ","));
+    context.subscriptions.push(vscode.languages.registerOnTypeFormattingEditProvider(Config_1.default.HONEYCOMB_SELECTOR, new HoneyCombDocumentFormattingEditProvider_1.default(), ",", "(", ")"));
     context.subscriptions.push(vscode.commands.registerCommand("extension.minimize", LanguageController_1.default.minimize));
     context.subscriptions.push(vscode.commands.registerCommand("extension.query", HoneycombController_1.default.query));
     context.subscriptions.push(vscode.commands.registerCommand("extension.pull", HoneycombController_1.default.pull));

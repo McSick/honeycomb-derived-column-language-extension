@@ -75,7 +75,7 @@
       },
       {
         "command": "extension.query",
-        "title": "Query Count [Enterprise Only]"
+        "title": "Query Count"
       }
     ],
     "configuration": {
@@ -95,6 +95,11 @@
           "type": "string",
           "default": "",
           "description": "Your Honeycomb Team URL slug, used to link into the Honeycomb UI. (optional)"
+        },
+        "honeycomb-derived.is_enterprise": { 
+          "type": "boolean",
+          "default": false,
+          "description": "Check if you are an Enterprise Honeycomb Cusomter and you want to run count queries from VSCode"
         },
         "honeycomb-derived.dataset_settings": { 
           "type": "object",
@@ -142,7 +147,8 @@
         },
         {
           "command": "extension.query",
-          "group": "Honeycomb"
+          "group": "Honeycomb",
+          "when": "config.honeycomb-derived.is_enterprise"
         }
 
       ],
@@ -171,8 +177,7 @@
           "honeycomb-derived"
         ],
         "extensions": [
-          ".honeycomb",
-          ".hny"
+          ".honeycomb"
         ],
         "configuration": "./language-configuration.json"
       }

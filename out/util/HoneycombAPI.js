@@ -37,9 +37,10 @@ class HoneycombAPI {
         this.post(`/1/query_results/${dataset}`, { query_id: queryid }, cb);
     }
     get_query_result(dataset, id, cb) {
-        this.pollresults(dataset, id, cb);
+        let numattempts = 0;
+        this.pollresults(dataset, id, cb, numattempts);
     }
-    pollresults(dataset, id, cb) {
+    pollresults(dataset, id, cb, numattempts) {
         this.get(`/1/query_results/${dataset}/${id}`, (r) => {
             if (r.error) {
                 cb(r);
@@ -47,9 +48,12 @@ class HoneycombAPI {
             else if (r.complete) {
                 cb(r);
             }
+            else if (numattempts > 10) {
+                cb({ error: "Query timed out, please try again later." });
+            }
             else {
                 setTimeout(() => {
-                    this.pollresults(dataset, id, cb);
+                    this.pollresults(dataset, id, cb, numattempts + 1);
                 }, 500);
             }
         });

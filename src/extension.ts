@@ -91,8 +91,9 @@ export function activate(context: ExtensionContext) {
     vscode.languages.registerOnTypeFormattingEditProvider(
       Config.HONEYCOMB_SELECTOR,
       new HoneyCombDocumentFormattingEditProvider(),
-      "\n",
-      ","
+      ",",
+      "(",
+      ")"
     )
   );
   context.subscriptions.push(
