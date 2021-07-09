@@ -68,16 +68,26 @@ export default class HoneyCombItemProvider implements CompletionItemProvider {
           var itemdefs = worddef.COMPLETIONITEMS;
           var itemlabels = worddef.COMPLETIONLABELS;
           itemlabels.forEach((item: any, i: number) => {
-            var completionitem = new CompletionItem(
-              item,
-              CompletionItemKind.Function
-            );
-            completionitem.documentation = new MarkdownString(
-              `${worddef.SIGNATURES[0]}   \n\n${worddef.HOVER}`,
-              true
-            );
-            completionitem.insertText = new vscode.SnippetString(itemdefs[i]);
-            result.push(completionitem);
+            if(worddef.is_snippet) {
+              var completionitem = new CompletionItem(
+                item,
+                CompletionItemKind.Snippet
+              );
+              completionitem.insertText = new vscode.SnippetString(itemdefs[i]);
+              result.push(completionitem);
+            } else {
+              var completionitem = new CompletionItem(
+                item,
+                CompletionItemKind.Function
+              );
+              completionitem.documentation = new MarkdownString(
+                `${worddef.SIGNATURES[0]}   \n\n${worddef.HOVER}`,
+                true
+              );
+              completionitem.insertText = new vscode.SnippetString(itemdefs[i]);
+              result.push(completionitem);
+            }
+            
           });
         });
       }

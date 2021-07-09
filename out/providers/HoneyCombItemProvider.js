@@ -44,10 +44,17 @@ class HoneyCombItemProvider {
                 var itemdefs = worddef.COMPLETIONITEMS;
                 var itemlabels = worddef.COMPLETIONLABELS;
                 itemlabels.forEach((item, i) => {
-                    var completionitem = new vscode_1.CompletionItem(item, vscode_1.CompletionItemKind.Function);
-                    completionitem.documentation = new vscode_1.MarkdownString(`${worddef.SIGNATURES[0]}   \n\n${worddef.HOVER}`, true);
-                    completionitem.insertText = new vscode.SnippetString(itemdefs[i]);
-                    result.push(completionitem);
+                    if (worddef.is_snippet) {
+                        var completionitem = new vscode_1.CompletionItem(item, vscode_1.CompletionItemKind.Snippet);
+                        completionitem.insertText = new vscode.SnippetString(itemdefs[i]);
+                        result.push(completionitem);
+                    }
+                    else {
+                        var completionitem = new vscode_1.CompletionItem(item, vscode_1.CompletionItemKind.Function);
+                        completionitem.documentation = new vscode_1.MarkdownString(`${worddef.SIGNATURES[0]}   \n\n${worddef.HOVER}`, true);
+                        completionitem.insertText = new vscode.SnippetString(itemdefs[i]);
+                        result.push(completionitem);
+                    }
                 });
             });
         }
