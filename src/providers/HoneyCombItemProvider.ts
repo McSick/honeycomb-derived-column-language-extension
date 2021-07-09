@@ -27,16 +27,16 @@ export default class HoneyCombItemProvider implements CompletionItemProvider {
 
   
   
-      let range = document.getWordRangeAtPosition(position);
+      let range = document.getWordRangeAtPosition(position, /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\\,\.\<\>\/\?\s]+)/g);
       const word = document.getText(range);
+      
       var result: CompletionItem[] = [];
       let dataset_settings = Config.get("dataset_settings")
       if(dataset_settings[dataset]) {
-        
         let cols = dataset_settings[dataset].columns;
         cols.forEach((col: any) => {
-  
-          if (col.key_name.includes(word)) {
+          let nodollar = word.replace("$", "");
+          if (col.key_name.includes(nodollar)) {
             var completionitem = new CompletionItem(
               col.key_name,
               CompletionItemKind.Variable
@@ -45,10 +45,11 @@ export default class HoneyCombItemProvider implements CompletionItemProvider {
               `${col.key_name}:${col.type}   \n\n${col.description}`,
               true
             );
+            let dollarsign = word.includes("$") ? "" : "$";
             if (col.key_name.includes(" ")) {
-              completionitem.insertText = `$"${col.key_name}"`;
+              completionitem.insertText = `${dollarsign}"${col.key_name}"`;
             } else {
-              completionitem.insertText = `$${col.key_name}`;
+              completionitem.insertText = `${dollarsign}${col.key_name}`;
             }
             
     
@@ -76,7 +77,6 @@ export default class HoneyCombItemProvider implements CompletionItemProvider {
               true
             );
             completionitem.insertText = new vscode.SnippetString(itemdefs[i]);
-  
             result.push(completionitem);
           });
         });

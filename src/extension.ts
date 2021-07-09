@@ -1,40 +1,55 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import HoneycombAPI from './util/HoneycombAPI';
-import HoneyCombDocumentFormattingEditProvider from './providers/HoneyCombDocumentFormattingEditProvider';
-import HoneyCombHoverProvider from './providers/HoneyCombHoverProvider';
+import HoneycombAPI from "./util/HoneycombAPI";
+import HoneyCombDocumentFormattingEditProvider from "./providers/HoneyCombDocumentFormattingEditProvider";
+import HoneyCombHoverProvider from "./providers/HoneyCombHoverProvider";
 import HoneyCombItemProvider from "./providers/HoneyCombItemProvider";
-import HoneyCombSignatureProvider from './providers/HoneyCombSignatureProvider';
-import HoneycombResultPanel from './panels/HoneycombResultPanel';
-import HoneycombController from './controllers/HoneycombController';
-import LanguageController from './controllers/LanguageController';
-import {
-  ExtensionContext
-} from "vscode";
-import Config from './util/Config';
-
-
-
-
+import HoneyCombSignatureProvider from "./providers/HoneyCombSignatureProvider";
+import HoneycombResultPanel from "./panels/HoneycombResultPanel";
+import HoneycombController from "./controllers/HoneycombController";
+import LanguageController from "./controllers/LanguageController";
+import { ExtensionContext } from "vscode";
+import Config from "./util/Config";
 
 export function activate(context: ExtensionContext) {
-
   context.subscriptions.push(
-    vscode.commands.registerCommand('HoneycombResult.show', (table: string, dataset: string, resultid: string) => {
-      HoneycombResultPanel.createOrShow(context.extensionUri, table, dataset, resultid);
-    })
+    vscode.commands.registerCommand(
+      "HoneycombResult.show",
+      (table: string, dataset: string, resultid: string) => {
+        HoneycombResultPanel.createOrShow(
+          context.extensionUri,
+          table,
+          dataset,
+          resultid
+        );
+      }
+    )
   );
 
   if (vscode.window.registerWebviewPanelSerializer) {
     // Make sure we register a serializer in activation event
-    vscode.window.registerWebviewPanelSerializer(HoneycombResultPanel.viewType, {
-      async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-        // Reset the webview options so we use latest uri for `localResourceRoots`.
-        webviewPanel.webview.options = Config.getWebviewOptions(context.extensionUri);
-        HoneycombResultPanel.revive(webviewPanel, context.extensionUri, '', '', '');
+    vscode.window.registerWebviewPanelSerializer(
+      HoneycombResultPanel.viewType,
+      {
+        async deserializeWebviewPanel(
+          webviewPanel: vscode.WebviewPanel,
+          state: any
+        ) {
+          // Reset the webview options so we use latest uri for `localResourceRoots`.
+          webviewPanel.webview.options = Config.getWebviewOptions(
+            context.extensionUri
+          );
+          HoneycombResultPanel.revive(
+            webviewPanel,
+            context.extensionUri,
+            "",
+            "",
+            ""
+          );
+        },
       }
-    });
+    );
   }
   context.subscriptions.push(
     vscode.languages.registerHoverProvider(
@@ -53,6 +68,7 @@ export function activate(context: ExtensionContext) {
       Config.HONEYCOMB_SELECTOR,
       new HoneyCombItemProvider(),
       "\\u0008",
+      "$",
       "A",
       "B",
       "C",
@@ -78,7 +94,33 @@ export function activate(context: ExtensionContext) {
       "W",
       "X",
       "Y",
-      "Z"
+      "Z",
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z"
     )
   );
   context.subscriptions.push(
@@ -97,35 +139,40 @@ export function activate(context: ExtensionContext) {
     )
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.minimize", LanguageController.minimize)
+    vscode.commands.registerCommand(
+      "extension.minimize",
+      LanguageController.minimize
+    )
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.query", HoneycombController.query)
+    vscode.commands.registerCommand(
+      "extension.query",
+      HoneycombController.query
+    )
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.pull",  HoneycombController.pull)
+    vscode.commands.registerCommand("extension.pull", HoneycombController.pull)
   );
   context.subscriptions.push(
     vscode.commands.registerCommand("extension.push", HoneycombController.push)
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.delete",HoneycombController.delete
+    vscode.commands.registerCommand(
+      "extension.delete",
+      HoneycombController.delete
     )
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.validate", (uri: vscode.Uri) => {
-
-
-    })
+    vscode.commands.registerCommand(
+      "extension.validate",
+      (uri: vscode.Uri) => {}
+    )
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("extension.pullall", HoneycombController.pullAll
-    ));
+    vscode.commands.registerCommand(
+      "extension.pullall",
+      HoneycombController.pullAll
+    )
+  );
 }
-
-
-
-
-
-

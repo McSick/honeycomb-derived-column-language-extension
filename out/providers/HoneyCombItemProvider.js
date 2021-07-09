@@ -13,21 +13,23 @@ class HoneyCombItemProvider {
         let patharr = fsPath.split("/");
         let alias = patharr[patharr.length - 1].split(".")[0];
         let dataset = patharr[patharr.length - 2];
-        let range = document.getWordRangeAtPosition(position);
+        let range = document.getWordRangeAtPosition(position, /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\\,\.\<\>\/\?\s]+)/g);
         const word = document.getText(range);
         var result = [];
         let dataset_settings = Config_1.default.get("dataset_settings");
         if (dataset_settings[dataset]) {
             let cols = dataset_settings[dataset].columns;
             cols.forEach((col) => {
-                if (col.key_name.includes(word)) {
+                let nodollar = word.replace("$", "");
+                if (col.key_name.includes(nodollar)) {
                     var completionitem = new vscode_1.CompletionItem(col.key_name, vscode_1.CompletionItemKind.Variable);
                     completionitem.documentation = new vscode_1.MarkdownString(`${col.key_name}:${col.type}   \n\n${col.description}`, true);
+                    let dollarsign = word.includes("$") ? "" : "$";
                     if (col.key_name.includes(" ")) {
-                        completionitem.insertText = `$"${col.key_name}"`;
+                        completionitem.insertText = `${dollarsign}"${col.key_name}"`;
                     }
                     else {
-                        completionitem.insertText = `$${col.key_name}`;
+                        completionitem.insertText = `${dollarsign}${col.key_name}`;
                     }
                     result.push(completionitem);
                 }
