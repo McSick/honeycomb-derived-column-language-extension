@@ -159,12 +159,6 @@ export function activate(context: ExtensionContext) {
   );
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      "extension.delete",
-      HoneycombController.delete
-    )
-  );
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
       "extension.validate",
       (uri: vscode.Uri) => {}
     )

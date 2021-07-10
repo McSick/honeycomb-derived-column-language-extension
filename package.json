@@ -62,10 +62,6 @@
         "title": "Push"
       },
       {
-        "command": "extension.delete",
-        "title": "Delete"
-      },
-      {
         "command": "extension.validate",
         "title": "Validate"
       },
@@ -139,10 +135,6 @@
         },
         {
           "command": "extension.push",
-          "group": "Honeycomb"
-        },
-        {
-          "command": "extension.delete",
           "group": "Honeycomb"
         },
         {

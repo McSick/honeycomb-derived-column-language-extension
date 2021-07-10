@@ -24,26 +24,6 @@ export default class HoneycombController {
             });
         });
     }
-    public static delete(uri: Uri) {
-        let patharr = uri.fsPath.split("/");
-        let alias = patharr[patharr.length - 1].split(".")[0];
-        let dataset = patharr[patharr.length - 2];
-        let dataset_settings: any = { ...Config.get("dataset_settings") };
-        let id = dataset_settings[dataset].derived_columns[alias].id || null;
-        if (id) {
-            HoneycombController._hnyapi.delete_derived_column(dataset, id, () => {
-                window.showInformationMessage(`Deleted DerivedColumn ${alias}`);
-                const wsedit = new vscode.WorkspaceEdit();
-                wsedit.deleteFile(uri);
-                vscode.workspace.applyEdit(wsedit).then(() => {
-                    dataset_settings[dataset].derived_columns[alias] = undefined;
-                    Config.set("dataset_settings", dataset_settings).then((success: any) => {
-                    });
-                });
-
-            });
-        }
-    }
     public static pull(uri: Uri) {
         let patharr = uri.fsPath.split("/");
         let alias = patharr[patharr.length - 1].split(".")[0];
