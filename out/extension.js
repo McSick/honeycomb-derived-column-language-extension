@@ -35,7 +35,6 @@ function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand("extension.query", HoneycombController_1.default.query));
     context.subscriptions.push(vscode.commands.registerCommand("extension.pull", HoneycombController_1.default.pull));
     context.subscriptions.push(vscode.commands.registerCommand("extension.push", HoneycombController_1.default.push));
-    context.subscriptions.push(vscode.commands.registerCommand("extension.delete", HoneycombController_1.default.delete));
     context.subscriptions.push(vscode.commands.registerCommand("extension.validate", (uri) => { }));
     context.subscriptions.push(vscode.commands.registerCommand("extension.pullall", HoneycombController_1.default.pullAll));
 }

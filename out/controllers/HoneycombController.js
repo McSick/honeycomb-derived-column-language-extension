@@ -19,25 +19,6 @@ class HoneycombController {
             });
         });
     }
-    static delete(uri) {
-        let patharr = uri.fsPath.split("/");
-        let alias = patharr[patharr.length - 1].split(".")[0];
-        let dataset = patharr[patharr.length - 2];
-        let dataset_settings = { ...Config_1.default.get("dataset_settings") };
-        let id = dataset_settings[dataset].derived_columns[alias].id || null;
-        if (id) {
-            HoneycombController._hnyapi.delete_derived_column(dataset, id, () => {
-                vscode_1.window.showInformationMessage(`Deleted DerivedColumn ${alias}`);
-                const wsedit = new vscode.WorkspaceEdit();
-                wsedit.deleteFile(uri);
-                vscode.workspace.applyEdit(wsedit).then(() => {
-                    dataset_settings[dataset].derived_columns[alias] = undefined;
-                    Config_1.default.set("dataset_settings", dataset_settings).then((success) => {
-                    });
-                });
-            });
-        }
-    }
     static pull(uri) {
         let patharr = uri.fsPath.split("/");
         let alias = patharr[patharr.length - 1].split(".")[0];
@@ -52,26 +33,28 @@ class HoneycombController {
                 else if (dc) {
                     let col = dc;
                     HoneycombController.saveDerivedColumnToSource(col, uri.fsPath);
-                    dataset_settings[dataset].derived_columns[dc.alias] = { id: dc.id, description: dc.description };
+                    dataset_settings[dataset].derived_columns[dc.alias] = {
+                        id: dc.id,
+                        description: dc.description,
+                    };
                 }
-                Config_1.default.set("dataset_settings", dataset_settings).then((success) => {
-                });
+                Config_1.default.set("dataset_settings", dataset_settings).then((success) => { });
             });
         }
         else {
-            vscode_1.window.showErrorMessage("ID not saved locally. Please pull all from dataset to get derived column id.");
+            vscode_1.window.showErrorMessage("ID not saved locally. Please pull all from dataset to get DerivedColumn id.");
         }
     }
     static pullAll(uri) {
         let patharr = uri.fsPath.split("/");
         let dataset = patharr[patharr.length - 1];
         let dataset_settings = Config_1.default.get("dataset_settings");
-        if (!dataset_settings.hasOwnProperty(dataset)) {
-            dataset_settings[dataset] = {
-                derived_columns: {},
-                columns: {},
-            };
-        }
+        //if (!dataset_settings.hasOwnProperty(dataset)) {
+        dataset_settings[dataset] = {
+            derived_columns: {},
+            columns: {},
+        };
+        // }
         HoneycombController._hnyapi.get_all_columns(dataset, (dataset_columns) => {
             dataset_settings[dataset].columns = dataset_columns;
             HoneycombController._hnyapi.get_all_derived_columns(dataset, (columns) => {
@@ -92,6 +75,39 @@ class HoneycombController {
             });
         });
     }
+    static create_new_derived_column(dataset, dc) {
+        let dataset_settings = Config_1.default.get("dataset_settings");
+        HoneycombController._hnyapi.create_new_derived_column(dataset, dc, (col) => {
+            if (Helpers_1.isError(col)) {
+                vscode_1.window.showErrorMessage(col.error);
+            }
+            else {
+                dataset_settings[dataset].derived_columns[col.alias] = {
+                    id: col.id,
+                    description: col.description,
+                };
+                vscode_1.window.showInformationMessage(`Created DerivedColumn ${col.alias} with id ${col.id}`);
+                Config_1.default.set("dataset_settings", dataset_settings).then((success) => { });
+            }
+        });
+    }
+    static update_derived_column(dataset, dc) {
+        HoneycombController._hnyapi.update_derived_column(dataset, dc.id, dc, (col) => {
+            if (Helpers_1.isError(col)) {
+                if (col.error === 'derived column not found') {
+                    vscode_1.window.showWarningMessage('DerivedColumn not found, creating new DerivedColumn');
+                    delete dc["id"];
+                    HoneycombController.create_new_derived_column(dataset, dc);
+                }
+                else {
+                    vscode_1.window.showErrorMessage(col.error);
+                }
+            }
+            else {
+                vscode_1.window.showInformationMessage(`Updated DerivedColumn ${col.alias}`);
+            }
+        });
+    }
     static push(uri) {
         let patharr = uri.fsPath.split("/");
         let alias = patharr[patharr.length - 1].split(".")[0];
@@ -99,41 +115,24 @@ class HoneycombController {
         vscode_1.workspace.openTextDocument(uri.fsPath).then((document) => {
             let expression = document.getText();
             let minizedexpression = Helpers_1.minimizeString(expression);
-            let dataset_settings = Config_1.default.get('dataset_settings');
+            let dataset_settings = Config_1.default.get("dataset_settings");
             if (dataset_settings[dataset].derived_columns[alias]) {
                 let id = dataset_settings[dataset].derived_columns[alias].id;
                 let dc = {
                     id: id,
                     description: dataset_settings[dataset].derived_columns[alias].description,
                     alias: alias,
-                    expression: minizedexpression
+                    expression: minizedexpression,
                 };
-                HoneycombController._hnyapi.update_derived_column(dataset, id, dc, (col) => {
-                    if (Helpers_1.isError(col)) {
-                        vscode_1.window.showErrorMessage(col.error);
-                    }
-                    else {
-                        vscode_1.window.showInformationMessage(`Updated DerivedColumn ${col.alias}`);
-                    }
-                });
+                HoneycombController.update_derived_column(dataset, dc);
             }
             else {
                 let dc = {
                     description: "",
                     alias: alias,
-                    expression: minizedexpression
+                    expression: minizedexpression,
                 };
-                HoneycombController._hnyapi.create_new_derived_column(dataset, dc, (col) => {
-                    if (Helpers_1.isError(col)) {
-                        vscode_1.window.showErrorMessage(col.error);
-                    }
-                    else {
-                        dataset_settings[dataset].derived_columns[col.alias] = { id: col.id, description: col.description };
-                        vscode_1.window.showInformationMessage(`Created DerivedColumn ${col.alias} with id ${col.id}`);
-                        Config_1.default.set("dataset_settings", dataset_settings).then((success) => {
-                        });
-                    }
-                });
+                HoneycombController.create_new_derived_column(dataset, dc);
             }
         });
     }
@@ -143,8 +142,8 @@ class HoneycombController {
         let dataset = patharr[patharr.length - 2];
         HoneycombController._hnyapi.create_query(dataset, {
             breakdowns: [alias],
-            calculations: [{ "op": "COUNT" }],
-            time_range: 7200
+            calculations: [{ op: "COUNT" }],
+            time_range: 7200,
         }, (query) => {
             if (query.id) {
                 HoneycombController._hnyapi.create_query_result(dataset, query.id, (query_result) => {
@@ -165,7 +164,7 @@ class HoneycombController {
                                     let row = `<tr><td>${name}</td><td>${count}</td></tr>`;
                                     table += row;
                                 }
-                                vscode_1.commands.executeCommand('HoneycombResult.show', table, dataset, query_data_result.id);
+                                vscode_1.commands.executeCommand("HoneycombResult.show", table, dataset, query_data_result.id);
                             }
                         });
                     }

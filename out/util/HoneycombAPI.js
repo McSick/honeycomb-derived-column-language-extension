@@ -27,9 +27,6 @@ class HoneycombAPI {
     update_derived_column(dataset, derived_column_id, dc_def, cb) {
         this.put(`/1/derived_columns/${dataset}/${derived_column_id}`, dc_def, cb);
     }
-    delete_derived_column(dataset, derived_column_id, cb) {
-        this.delete(`/1/derived_columns/${dataset}/${derived_column_id}`, cb);
-    }
     create_query(dataset, query, cb) {
         this.post(`/1/queries/${dataset}`, query, cb);
     }
