@@ -193,5 +193,12 @@ DEFINITIONS.set("EVENT_TIMESTAMP", {
     SIGNATURES: ["$(symbol-function)**EVENT_TIMESTAMP**()"],
     HOVER: "Returns the Unix timestamp field of the current event (e.g. 1500549764). This is useful for comparing two timestamps in an event; for example, to calculate a duration from a start and an end timestamp. This function takes no arguments."
 });
+DEFINITIONS.set("ISROOT", {
+    COMPLETIONITEMS: ["NOT(EXISTS(\\$trace.parent_id))"],
+    COMPLETIONLABELS: ["ISROOT"],
+    SIGNATURES: [""],
+    HOVER: "Helper funtion to isolate only root spans",
+    is_snippet: true
+});
 exports.default = DEFINITIONS;
 //# sourceMappingURL=textdefinitions.js.map

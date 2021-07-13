@@ -1,0 +1,19 @@
+IF(
+	AND(
+		EXISTS(
+			$app.status_code
+		),
+		NOT(
+			IN(
+				$app.status_code,
+				401,
+				403,
+				404
+			)
+		)
+	),
+	LTE(
+		$app.status_code,
+		400
+	)
+)

@@ -33,13 +33,15 @@
     "watch": "tsc -watch -p ./"
   },
   "activationEvents": [
-    "onLanguage:honeycomb-derived"
+    "onLanguage:honeycomb-derived",
+    "onStartupFinished"
   ],
   "repository": "https://github.com/McSick/honeycomb-derived-column-language-extension",
   "main": "./out/extension.js",
   "devDependencies": {
     "@types/node": "^12.12.0",
     "@types/vscode": "^1.34.0",
+    "@types/vscode-webview": "^1.57.0",
     "@typescript-eslint/eslint-plugin": "^3.0.2",
     "@typescript-eslint/parser": "^3.0.2",
     "eslint": "^7.1.0",
@@ -50,17 +52,115 @@
       {
         "command": "extension.minimize",
         "title": "Minimize"
+      },
+      {
+        "command": "extension.pull",
+        "title": "Pull"
+      },
+      {
+        "command": "extension.push",
+        "title": "Push"
+      },
+      {
+        "command": "extension.validate",
+        "title": "Validate"
+      },
+      {
+        "command": "extension.pullall",
+        "title": "Pull From Dataset"
+      },
+      {
+        "command": "extension.query",
+        "title": "Query Count"
       }
     ],
+    "configuration": {
+      "title": "Honeycomb Derviced Columns",
+      "properties": {
+        "honeycomb-derived.apikey": { 
+          "type": "string",
+          "default": "",
+          "description": "Your Honeycomb API Key with the permissions of \"Manage Queries and Columns\""
+        },
+        "honeycomb-derived.apiurl": { 
+          "type": "string",
+          "default": "api.honeycomb.io",
+          "description": "Honeycomb api url"
+        },
+        "honeycomb-derived.team": { 
+          "type": "string",
+          "default": "",
+          "description": "Your Honeycomb Team URL slug, used to link into the Honeycomb UI. (optional)"
+        },
+        "honeycomb-derived.is_enterprise": { 
+          "type": "boolean",
+          "default": false,
+          "description": "Check if you are an Enterprise Honeycomb Cusomter and you want to run count queries from VSCode"
+        },
+        "honeycomb-derived.dataset_settings": { 
+          "type": "object",
+          "default": {},
+          "description": "Dataset settings like column names & derived column id's"
+        }
+      }
+    },
     "menus": {
       "editor/context": [
         {
           "when": "resourceLangId == honeycomb-derived",
-          "command": "extension.minimize",
+          "submenu": "honeycomb.derived-column",
           "group": "Honeycomb"
         }
+      ],
+      "explorer/context": [
+        {
+          "when": "resourceLangId == honeycomb-derived",
+          "submenu": "honeycomb.derived-column",
+          "group": "Honeycomb"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "submenu": "honeycomb.dataset",
+          "group": "Honeycomb"
+        }
+      ],
+      "honeycomb.derived-column": [
+        {
+          "command": "extension.minimize",
+          "group": "Honeycomb"
+        },
+        {
+          "command": "extension.pull",
+          "group": "Honeycomb"
+        },
+        {
+          "command": "extension.push",
+          "group": "Honeycomb"
+        },
+        {
+          "command": "extension.query",
+          "group": "Honeycomb",
+          "when": "config.honeycomb-derived.is_enterprise"
+        }
+
+      ],
+      "honeycomb.dataset": [
+        {
+          "command": "extension.pullall",
+          "group": "Honeycomb"
+        }          
       ]
     },
+    "submenus": [
+      {
+        "id": "honeycomb.derived-column",
+        "label": "Honeycomb"
+      },        
+      {
+        "id": "honeycomb.dataset",
+        "label": "Honeycomb"
+      }    
+    ],
     "languages": [
       {
         "id": "honeycomb-derived",
@@ -69,8 +169,7 @@
           "honeycomb-derived"
         ],
         "extensions": [
-          ".honeycomb",
-          ".hny"
+          ".honeycomb"
         ],
         "configuration": "./language-configuration.json"
       }
