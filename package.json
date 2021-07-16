@@ -3,7 +3,7 @@
   "displayName": "Honeycomb Derived Columns Language",
   "description": "Create derived columns for use in Honeycomb.io's SLI's.  This is not an official honeycomb.io maintained plugin.",
   "publisher": "michaelcsickles",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "MIT",
   "author": {
     "name": "michaelcsickles"
@@ -77,27 +77,27 @@
     "configuration": {
       "title": "Honeycomb Derviced Columns",
       "properties": {
-        "honeycomb-derived.apikey": { 
+        "honeycomb-derived.apikey": {
           "type": "string",
           "default": "",
           "description": "Your Honeycomb API Key with the permissions of \"Manage Queries and Columns\""
         },
-        "honeycomb-derived.apiurl": { 
+        "honeycomb-derived.apiurl": {
           "type": "string",
           "default": "api.honeycomb.io",
           "description": "Honeycomb api url"
         },
-        "honeycomb-derived.team": { 
+        "honeycomb-derived.team": {
           "type": "string",
           "default": "",
           "description": "Your Honeycomb Team URL slug, used to link into the Honeycomb UI. (optional)"
         },
-        "honeycomb-derived.is_enterprise": { 
+        "honeycomb-derived.is_enterprise": {
           "type": "boolean",
           "default": false,
           "description": "Check if you are an Enterprise Honeycomb Cusomter and you want to run count queries from VSCode"
         },
-        "honeycomb-derived.dataset_settings": { 
+        "honeycomb-derived.dataset_settings": {
           "type": "object",
           "default": {},
           "description": "Dataset settings like column names & derived column id's"
@@ -142,24 +142,23 @@
           "group": "Honeycomb",
           "when": "config.honeycomb-derived.is_enterprise"
         }
-
       ],
       "honeycomb.dataset": [
         {
           "command": "extension.pullall",
           "group": "Honeycomb"
-        }          
+        }
       ]
     },
     "submenus": [
       {
         "id": "honeycomb.derived-column",
         "label": "Honeycomb"
-      },        
+      },
       {
         "id": "honeycomb.dataset",
         "label": "Honeycomb"
-      }    
+      }
     ],
     "languages": [
       {

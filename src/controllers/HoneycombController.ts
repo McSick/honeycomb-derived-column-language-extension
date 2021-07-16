@@ -29,7 +29,7 @@ export default class HoneycombController {
     });
   }
   public static pull(uri: Uri) {
-    let patharr = uri.fsPath.split("/");
+    let patharr = uri.path.split("/");
     let alias = patharr[patharr.length - 1].split(".")[0];
     let dataset = patharr[patharr.length - 2];
 
@@ -44,7 +44,7 @@ export default class HoneycombController {
             window.showErrorMessage(dc.error);
           } else if (dc) {
             let col = dc as DerivedColumn;
-            HoneycombController.saveDerivedColumnToSource(col, uri.fsPath);
+            HoneycombController.saveDerivedColumnToSource(col, uri.path);
             dataset_settings[dataset].derived_columns[dc.alias] = {
               id: dc.id,
               description: dc.description,
@@ -64,8 +64,9 @@ export default class HoneycombController {
   }
 
   public static pullAll(uri: Uri) {
-    let patharr = uri.fsPath.split("/");
+    let patharr = uri.path.split("/");
     let dataset = patharr[patharr.length - 1];
+    
     let dataset_settings: any = Config.get("dataset_settings");
     //if (!dataset_settings.hasOwnProperty(dataset)) {
     dataset_settings[dataset] = {
@@ -89,7 +90,7 @@ export default class HoneycombController {
                 let col = dc as DerivedColumn;
                 HoneycombController.saveDerivedColumnToSource(
                   col,
-                  `${uri.fsPath}/${dc.alias}.honeycomb`
+                  `${uri.path}/${dc.alias}.honeycomb`
                 );
                 dataset_settings[dataset].derived_columns[dc.alias] = {
                   id: dc.id,
@@ -149,10 +150,10 @@ export default class HoneycombController {
     );
   }
   public static push(uri: Uri) {
-    let patharr = uri.fsPath.split("/");
+    let patharr = uri.path.split("/");
     let alias = patharr[patharr.length - 1].split(".")[0];
     let dataset = patharr[patharr.length - 2];
-    workspace.openTextDocument(uri.fsPath).then((document: TextDocument) => {
+    workspace.openTextDocument(uri.path).then((document: TextDocument) => {
       let expression: string = document.getText();
       let minizedexpression = minimizeString(expression);
 
@@ -179,7 +180,7 @@ export default class HoneycombController {
   }
 
   public static query(uri: Uri) {
-    let patharr = uri.fsPath.split("/");
+    let patharr = uri.path.split("/");
     let alias = patharr[patharr.length - 1].split(".")[0];
     let dataset = patharr[patharr.length - 2];
     HoneycombController._hnyapi.create_query(

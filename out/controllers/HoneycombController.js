@@ -20,7 +20,7 @@ class HoneycombController {
         });
     }
     static pull(uri) {
-        let patharr = uri.fsPath.split("/");
+        let patharr = uri.path.split("/");
         let alias = patharr[patharr.length - 1].split(".")[0];
         let dataset = patharr[patharr.length - 2];
         let dataset_settings = { ...Config_1.default.get("dataset_settings") };
@@ -32,7 +32,7 @@ class HoneycombController {
                 }
                 else if (dc) {
                     let col = dc;
-                    HoneycombController.saveDerivedColumnToSource(col, uri.fsPath);
+                    HoneycombController.saveDerivedColumnToSource(col, uri.path);
                     dataset_settings[dataset].derived_columns[dc.alias] = {
                         id: dc.id,
                         description: dc.description,
@@ -46,7 +46,7 @@ class HoneycombController {
         }
     }
     static pullAll(uri) {
-        let patharr = uri.fsPath.split("/");
+        let patharr = uri.path.split("/");
         let dataset = patharr[patharr.length - 1];
         let dataset_settings = Config_1.default.get("dataset_settings");
         //if (!dataset_settings.hasOwnProperty(dataset)) {
@@ -64,7 +64,7 @@ class HoneycombController {
                 columns.forEach((dc) => {
                     if (dc) {
                         let col = dc;
-                        HoneycombController.saveDerivedColumnToSource(col, `${uri.fsPath}/${dc.alias}.honeycomb`);
+                        HoneycombController.saveDerivedColumnToSource(col, `${uri.path}/${dc.alias}.honeycomb`);
                         dataset_settings[dataset].derived_columns[dc.alias] = {
                             id: dc.id,
                             description: dc.description,
@@ -109,10 +109,10 @@ class HoneycombController {
         });
     }
     static push(uri) {
-        let patharr = uri.fsPath.split("/");
+        let patharr = uri.path.split("/");
         let alias = patharr[patharr.length - 1].split(".")[0];
         let dataset = patharr[patharr.length - 2];
-        vscode_1.workspace.openTextDocument(uri.fsPath).then((document) => {
+        vscode_1.workspace.openTextDocument(uri.path).then((document) => {
             let expression = document.getText();
             let minizedexpression = Helpers_1.minimizeString(expression);
             let dataset_settings = Config_1.default.get("dataset_settings");
@@ -137,7 +137,7 @@ class HoneycombController {
         });
     }
     static query(uri) {
-        let patharr = uri.fsPath.split("/");
+        let patharr = uri.path.split("/");
         let alias = patharr[patharr.length - 1].split(".")[0];
         let dataset = patharr[patharr.length - 2];
         HoneycombController._hnyapi.create_query(dataset, {

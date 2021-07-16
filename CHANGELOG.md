@@ -18,3 +18,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Can now managed your dervied columns with an api key
 - Enterprise customers can run a count query 
 - Team name will be used with a count query to link directly back to honeycomb
+
+## [1.2.1] - 2021-07-16
+- Bug fix for windows
