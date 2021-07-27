@@ -210,9 +210,9 @@ DEFINITIONS.set("REG_COUNT", {
 
 });
 DEFINITIONS.set("UNIX_TIMESTAMP", {
-    COMPLETIONITEMS:["UNIX_TIMESTAMP()"],
-    COMPLETIONLABELS:["UNIX_TIMESTAMP()"],
-    SIGNATURES: ["$(symbol-function)**UNIX_TIMESTAMP**()"],
+    COMPLETIONITEMS:["UNIX_TIMESTAMP(${1:string})"],
+    COMPLETIONLABELS:["UNIX_TIMESTAMP(string)"],
+    SIGNATURES: ["$(symbol-function)**UNIX_TIMESTAMP**(string)"],
     HOVER:"Converts a date string in RFC3339 format (e.g., 2017-07-20T11:22:44.888Z) to a Unix timestamp (1500549764.888). This is useful for comparing two timestamps in an event; for example, to calculate a duration from a start and an end timestamp."
 
 });
@@ -221,6 +221,20 @@ DEFINITIONS.set("EVENT_TIMESTAMP", {
     COMPLETIONLABELS:["EVENT_TIMESTAMP()"],
     SIGNATURES: ["$(symbol-function)**EVENT_TIMESTAMP**()"],
     HOVER:"Returns the Unix timestamp field of the current event (e.g. 1500549764). This is useful for comparing two timestamps in an event; for example, to calculate a duration from a start and an end timestamp. This function takes no arguments."
+
+});
+DEFINITIONS.set("INGEST_TIMESTAMP", {
+    COMPLETIONITEMS:["INGEST_TIMESTAMP()"],
+    COMPLETIONLABELS:["INGEST_TIMESTAMP()"],
+    SIGNATURES: ["$(symbol-function)**INGEST_TIMESTAMP**()"],
+    HOVER:"Returns the Unix timestamp indicating when Honeycomb’s servers received the current event, as a float (e.g. 1500549764.888). This is useful for debugging event latency by comparing the event timestamp to the ingestion time. This function takes no arguments."
+
+});
+DEFINITIONS.set("FORMAT_TIME", {
+    COMPLETIONITEMS:["FORMAT_TIME(${1:format},${2:timestamp})"],
+    COMPLETIONLABELS:["FORMAT_TIME(format, timestamp)"],
+    SIGNATURES: ["$(symbol-function)**FORMAT_TIME**(format, timestamp)"],
+    HOVER:"Formats a Unix timestamp as a string. The first argument is a format specifier string compatible with POSIX strftime, and the second argument is the numeric timestamp. Does not support not-UTC timezones or locale-modified specifiers. Also note this formatting is more expensive than other derived column functions and may slow down queries, especially when using a complex format."
 
 });
 DEFINITIONS.set("ISROOT", {

@@ -44,7 +44,7 @@
         },
         {
           "name": "keyword.utility.honeycomb-sli",
-          "match": "\\b(UNIX_TIMESTAMP|EVENT_TIMESTAMP)\\b"
+          "match": "\\b(UNIX_TIMESTAMP|EVENT_TIMESTAMP|INGEST_TIMESTAMP|FORMAT_TIME)\\b"
         }
       ]
     },

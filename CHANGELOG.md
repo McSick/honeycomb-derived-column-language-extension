@@ -21,3 +21,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [1.2.1] - 2021-07-16
 - Bug fix for windows
+
+## [1.3.0] - 2021-07-27
+- Added INGEST_TIMESTAMP & FORMAT_TIME

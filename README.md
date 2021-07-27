@@ -26,4 +26,5 @@ If you run into an issue. Please log it [here](https://github.com/McSick/honeyco
 - 1.1.6 .hny or .honeycomb extension
 - 1.2.0 Manage Derived Columns remotely
 - 1.2.1 Fix for Windows
+- 1.3.0 INGEST_TIMESTAMP & FORMAT_TIME added
 
