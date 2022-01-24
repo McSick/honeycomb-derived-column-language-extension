@@ -17,14 +17,14 @@ Language features for Honeycombe derived columns. Just save a file as .honeycomb
 If you run into an issue. Please log it [here](https://github.com/McSick/honeycomb-derived-column-language-extension/issues)
 ## Release Notes
 
-- 1.0.0, initial release.
-- 1.1.1 quick fix for parenthese
-- 1.1.2 quick fix for backtic
-- 1.1.3 quick fix for minimize in quotes
-- 1.1.4 less regex on minimize, more logic
-- 1.1.5 even more logic
-- 1.1.6 .hny or .honeycomb extension
-- 1.2.0 Manage Derived Columns remotely
-- 1.2.1 Fix for Windows
-- 1.3.0 INGEST_TIMESTAMP & FORMAT_TIME added
 - 1.3.1 LENGTH added + minimize command 
+- 1.3.0 INGEST_TIMESTAMP & FORMAT_TIME added
+- 1.2.1 Fix for Windows
+- 1.2.0 Manage Derived Columns remotely
+- 1.1.6 .hny or .honeycomb extension
+- 1.1.5 even more logic
+- 1.1.4 less regex on minimize, more logic
+- 1.1.3 quick fix for minimize in quotes
+- 1.1.2 quick fix for backtic
+- 1.1.1 quick fix for parenthese
+- 1.0.0, initial release.
