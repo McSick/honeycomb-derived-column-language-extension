@@ -209,6 +209,13 @@ DEFINITIONS.set("REG_COUNT", {
     HOVER:"Returns the number of non-overlapping successive matches yielded by the provided Golang regex. Returns 0 if the first argument contains no matches or is not a string. The provided regex must be a string literal containing a valid regular expression."
 
 });
+DEFINITIONS.set("LENGTH", {
+    COMPLETIONITEMS:["LENGTH(${1:string},\"bytes\")", "LENGTH(${1:string},\"chars\""],
+    COMPLETIONLABELS:["LENGTH(string, \"bytes\")", "LENGTH(string, \"chars\")"],
+    SIGNATURES: ["$(symbol-function)**LENGTH**(string,  \"bytes\" | \"chars\")"],
+    HOVER:"Returns the length of a string in either bytes, or user-perceived characters. The second argument must be either “bytes” or “chars”. Returns 0 if the first argument is not a string, or if the first argument is not valid utf8 when second argument is “chars”."
+
+});
 DEFINITIONS.set("UNIX_TIMESTAMP", {
     COMPLETIONITEMS:["UNIX_TIMESTAMP(${1:string})"],
     COMPLETIONLABELS:["UNIX_TIMESTAMP(string)"],

@@ -3,7 +3,7 @@
   "displayName": "Honeycomb Derived Columns Language",
   "description": "Create derived columns for use in Honeycomb.io's SLI's.  This is not an official honeycomb.io maintained plugin.",
   "publisher": "michaelcsickles",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "license": "MIT",
   "author": {
     "name": "michaelcsickles"
@@ -72,6 +72,18 @@
       {
         "command": "extension.query",
         "title": "Query Count"
+      }
+    ],
+    "keybindings": [
+      {
+        "key": "shift+alt+m",
+        "command": "extension.minimize",
+        "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
+      },
+      {
+        "key": "shift+alt+m",
+        "command": "extension.minimize",
+        "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
       }
     ],
     "configuration": {

@@ -40,7 +40,7 @@
         },
         {
           "name": "keyword.string.honeycomb-sli",
-          "match": "\\b(CONCAT|STARTS_WITH|CONTAINS|REG_MATCH|REG_VALUE|REG_COUNT)\\b"
+          "match": "\\b(CONCAT|STARTS_WITH|CONTAINS|REG_MATCH|REG_VALUE|REG_COUNT|LENGTH)\\b"
         },
         {
           "name": "keyword.utility.honeycomb-sli",

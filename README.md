@@ -6,8 +6,8 @@ Language features for Honeycombe derived columns. Just save a file as .honeycomb
 
 - Auto Complete
 - Hover Definitions
-- Format Document to Expand
-- Minimize 
+- Format Document to Expand (shift + alt/option + F)
+- Minimize (shift + alt/option + M)
 - Pull All Dervied Columns from a dataset, just name a folder the same name as your dataset and put an apikey with "manage queries and columns" permissions your dataset settings. Right click the folder use the Honeycomb Pull All command.
 - Pull, Push individual columns in dataset folder
 - Autocomplete of columns for columns in dataset folder after you have pulled from Honeycomb.
@@ -27,4 +27,4 @@ If you run into an issue. Please log it [here](https://github.com/McSick/honeyco
 - 1.2.0 Manage Derived Columns remotely
 - 1.2.1 Fix for Windows
 - 1.3.0 INGEST_TIMESTAMP & FORMAT_TIME added
-
+- 1.3.1 LENGTH added + minimize command 
